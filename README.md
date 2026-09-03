@@ -4,7 +4,7 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. The full pipeline (Phases 1-7) is implemented and runnable end to end, including an exported recommendation report file written on every run. Not yet implemented: logging and the test suite.
+**Status:** in progress. The full pipeline (Phases 1-7) is implemented and runnable end to end, including an exported recommendation report file and an application log written on every run. Not yet implemented: the test suite.
 
 ## Usage
 
@@ -59,7 +59,9 @@ conversion_issues/      Generated parsing-issue reports -- currently empty for a
                          validation (no issues found)
 exported_reports/       Generated per-run recommendation report files (timestamped .txt,
                          gitignored -- regenerated on every run, not canonical output)
-logs/                   Generated application logs (runtime, currently empty)
+logs/                   app.log -- conversion decisions, record counts, warnings/errors,
+                         user selections, deduplication, ranking, exports (gitignored,
+                         grows across runs; never logs veteran-identifying information)
 requirements.txt        Python dependencies (openpyxl, python-docx)
 CHANGELOG.md            Full history of approved changes to this project
 ```

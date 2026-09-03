@@ -12,3 +12,6 @@ __pycache__/
 # Per-run exported recommendation reports (timestamped, regenerated on every run) --
 # a deliberately chosen sample is committed separately as its own deliverable.
 exported_reports/*.txt
+
+# Application log -- grows continuously across every run, purely local.
+logs/*.log

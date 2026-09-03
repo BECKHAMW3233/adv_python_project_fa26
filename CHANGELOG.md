@@ -1,5 +1,20 @@
 # Changelog
 
+## [15] 2026-09-03 — Add application logging
+
+**Why:** the spec requires logging conversion decisions, warnings, errors, record counts, selections, deduplication, ranking, and exports (never sensitive personal information) -- nothing logged anywhere until now.
+
+- Added `_configure_logging()` to `main.py`: a file-only handler (no console output, to keep the interactive UI clean) writing to `logs/app.log`.
+- Added log calls at each point the spec names: conversion-vs-load decision and why; per-source record/issue counts during conversion (and each individual issue at `warning` level); validation summary and each individual issue (`warning` or `error` by severity); a fatal conversion failure at `error` level; the user's MOS/skill-level/training-count selection; a `deduplicated course` line whenever the credit profile merges the same course from more than one source; the final ranking (each recommended program's code and score); and the exported report's file path.
+- The log deliberately never records anything identifying the person running it -- only MOS/skill-level/training codes, course codes, record counts, and outcomes, none of which are personal information since the app never asks for the veteran's name or any other identifying detail in the first place.
+- Added `logs/*.log` to `.gitignore`, alongside the existing `exported_reports/*.txt` rule -- the log grows continuously across every run rather than being one-file-per-run, so it's even more clearly a local runtime artifact than the exported reports are.
+
+Verified by running the full pipeline three ways and reading `logs/app.log` after each: a cached-load run, a forced `--refresh` conversion run, and a run selecting a training whose course overlaps with the MOS-granted credit (confirmed the dedup line fires with both sources named). Also verified the error-logging call in isolation against a raised `SourceFileNotFoundError`, since the fatal-conversion-failure path can't be exercised without touching the real source files.
+
+**Files changed:** `main.py`, `.gitignore`, `README.md`
+
+---
+
 ## [14] 2026-09-03 — Implement ReportGenerator and export a recommendation report file
 
 **Why:** the spec's Required Demonstration steps and Deliverables both call for exporting and opening a recommendation report, not just printing to console -- `ReportGenerator` was still an empty stub, and `main.py`'s output only ever went to the terminal.

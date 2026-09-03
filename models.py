@@ -92,3 +92,27 @@ class CreditProfileEntry:
     course_id: str
     credits: int
     sources: str  # "; "-joined description of every source that granted credit for this course
+
+
+@dataclass
+class MatchedCourse:
+    course_id: str
+    credits: int
+    requirement_type: str
+    weight: int
+    ranking_points: int
+
+
+@dataclass
+class ProgramRecommendation:
+    program_code: str
+    program_title: str
+    credential_type: str
+    matched_courses: list[MatchedCourse]
+    applicable_matched_credits: int
+    major_required_credits_matched: int
+    recommendation_score: int
+    match_percentage: float | None
+    program_total_credits: float | None
+    estimated_credits_remaining: float | None
+    explanation: str

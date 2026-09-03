@@ -4,7 +4,7 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. Implemented so far: the three source importers (Phases 2-4), first-run/refresh detection (Phase 1), schema/integrity validation (Phase 5), and interactive MOS/training selection with a combined potential-credit profile (Phase 6). Not yet implemented: recommendation ranking against FTCC programs (Phase 7) and the test suite.
+**Status:** in progress. The full pipeline (Phases 1-7) is now implemented and runnable end to end: source conversion, refresh detection, validation, interactive MOS/training selection, potential-credit profiling, and top-3 FTCC program recommendations with exact-course-code matching, weighted scoring, and explanations. Not yet implemented: the `ReportGenerator`'s exportable (non-console) report, and the test suite.
 
 ## Usage
 
@@ -13,6 +13,7 @@ python main.py             Convert (if source files are new/changed) and print a
                             or load existing normalized data if it's already current --
                             then interactively prompt for an MOS, skill level, and
                             completed trainings, and print a potential-credit summary
+                            plus the top 3 recommended FTCC programs
 python main.py --refresh   Force reconversion from source files regardless of whether
                             normalized data looks current
 ```
@@ -26,9 +27,12 @@ docs/                 Assignment brief, grading rubric, background reading
 source_data/          Unmodified files supplied for the project -- MOS workbook,
                        training-equivalency doc, FTCC programs-of-study workbook
 main.py                Entry point -- first-run/refresh detection (Phase 1), orchestrates the
-                        three importers or loads existing normalized data, then runs the
-                        interactive MOS/skill-level/training prompt flow (Phase 6)
-config.py              Recommendation weights and other settings (not yet populated)
+                        three importers or loads existing normalized data, runs the interactive
+                        MOS/skill-level/training prompt flow (Phase 6), then displays ranked
+                        program recommendations (Phase 7)
+config.py              RECOMMENDATION_WEIGHTS (major_required=3, major_choice=2,
+                        general_education_choice=1) -- project settings, kept separate
+                        from the converted FTCC program data per the assignment spec
 models.py              Normalized-record schema / data models
 exceptions.py          Custom exceptions
 importers/             Source-specific parsers
@@ -41,7 +45,8 @@ services/              Normalization, validation, credit evaluation, recommendat
                                   (MOS/skill level/course) detection, unresolved requirement_type
   credit_evaluator.py            Implemented -- MOS/training matching, selection validation,
                                   deduplicated potential-credit profile with source lineage
-  recommendation_engine.py       Not yet implemented
+  recommendation_engine.py       Implemented -- exact course-code matching, weighted scoring,
+                                  top-3 ranking with tie-breaks, match %, and explanations
 repositories/           Read/write normalized CSV/JSON data
   normalized_data_repository.py  Implemented -- CSV read/write, source-file hashing, refresh manifest
 reports/                Console and exported reports (not yet implemented)

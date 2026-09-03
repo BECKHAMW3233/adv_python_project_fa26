@@ -10,7 +10,13 @@ from exceptions import InvalidSelectionError, SourceConversionError
 from importers.mos_workbook_importer import MOSWorkbookImporter
 from importers.program_workbook_importer import ProgramWorkbookImporter
 from importers.training_docx_importer import TrainingDocxImporter
-from models import CreditProfileEntry, MOSCourseEquivalency, ProgramRequirement, TrainingEquivalency
+from models import (
+    CreditProfileEntry,
+    MOSCourseEquivalency,
+    ProgramRecommendation,
+    ProgramRequirement,
+    TrainingEquivalency,
+)
 from repositories.normalized_data_repository import (
     compute_file_hash,
     read_csv,
@@ -20,6 +26,7 @@ from repositories.normalized_data_repository import (
 )
 from services.conversion_validator import ConversionValidator
 from services.credit_evaluator import CreditEvaluator
+from services.recommendation_engine import RecommendationEngine
 
 ROOT_DIR = Path(__file__).parent
 SOURCE_DATA_DIR = ROOT_DIR / "source_data"
@@ -205,6 +212,35 @@ def _print_credit_profile(profile: list[CreditProfileEntry]) -> None:
     )
 
 
+def _print_recommendations(recommendations: list[ProgramRecommendation]) -> None:
+    print()
+    print("TOP PROGRAM RECOMMENDATIONS")
+    if not recommendations:
+        print("No FTCC programs had an exact course-code match against your potential credits.")
+        return
+    for rank, rec in enumerate(recommendations, start=1):
+        print()
+        print(f"#{rank}: {rec.program_code} - {rec.program_title} ({rec.credential_type})")
+        print("  Matched courses:")
+        for match in rec.matched_courses:
+            print(
+                f"    {match.course_id}: {match.credits} credit(s) -- {match.requirement_type} "
+                f"(weight {match.weight}, {match.ranking_points} pts)"
+            )
+        print(f"  Total potentially applicable matched credits: {rec.applicable_matched_credits}")
+        print(f"  Recommendation score: {rec.recommendation_score}")
+        if rec.match_percentage is not None:
+            print(f"  Estimated match: {rec.match_percentage:.1f}% of {rec.program_total_credits} total credits")
+        if rec.estimated_credits_remaining is not None:
+            print(f"  Estimated credits remaining: {rec.estimated_credits_remaining}")
+        print(f"  {rec.explanation}")
+    print()
+    print(
+        "These are estimates only, based on exact course-code matches to documented "
+        "equivalencies. They do not replace an official transcript evaluation or degree audit."
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="FTCC Military Credit and Program Recommender")
     parser.add_argument(
@@ -261,6 +297,9 @@ def main() -> None:
         mos_records, mos_code, skill_level, training_records, training_ids
     )
     _print_credit_profile(profile)
+
+    recommendations = RecommendationEngine().recommend(profile, program_records)
+    _print_recommendations(recommendations)
 
 
 if __name__ == "__main__":

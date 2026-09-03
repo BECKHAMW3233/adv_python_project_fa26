@@ -1,5 +1,20 @@
 # Changelog
 
+## [13] 2026-09-03 — Implement Phase 7 recommendation engine
+
+**Why:** Phase 7 of the assignment spec requires matching a veteran's potential-credit profile against every FTCC program by exact course-code matches, scoring by requirement-type weight, ranking the top 3 with a specific tie-break order, and explaining each match -- the last remaining core pipeline phase.
+
+- Added `RECOMMENDATION_WEIGHTS` to `config.py` (`major_required: 3, major_choice: 2, general_education_choice: 1`), stored separately from the converted program data per the spec's explicit instruction not to merge project-defined weights into source-derived data.
+- Implemented `RecommendationEngine` (`services/recommendation_engine.py`). For each program, only exact course-code matches against the veteran's profile count; a course with `requirement_type=unresolved` is never scored (no guessing). When the same course appears under more than one requirement group in a program (e.g. both a direct requirement and, elsewhere, an elective choice), the higher-weighted classification is used rather than whichever occurs first. `applicable_matched_credits` (sum of matched credits) and `recommendation_score` (sum of credits × weight) are kept as separate figures, matching the spec's own worked example exactly (verified: ELC112 5cr×w3 + ISC112 2cr×w2 + COM120 3cr×w1 = 10 matched credits, score 22). Programs with zero exact matches are excluded from ranking entirely, not just deprioritized. Ranking applies the spec's 5-step tie-break in order: more major-required credits matched, then more total matched credits, then more matched courses, then higher match percentage, then alphabetical by program title.
+- Added `MatchedCourse` and `ProgramRecommendation` to `models.py`.
+- Added the top-3 recommendation display to `main.py`'s interactive flow (matched courses with their weight/points, total matched credits, score, match percentage, estimated credits remaining, and a generated explanation), immediately after the Phase 6 credit-profile summary, closing with the spec's estimate-only disclaimer.
+
+Verified by: matching the spec's own worked example precisely (asserted both figures); running the engine against real converted data with a real MOS profile (25B skill level 30) and confirming Information Technology correctly ranks #1 with a sensible 6-course match; and three targeted synthetic tests confirming a program with only an unresolved-type match is excluded entirely, a course appearing twice in one program correctly keeps its higher-weighted classification, and two programs tied on score are correctly ordered by the major-required-credits tie-break rather than falling through to alphabetical. Also ran the complete interactive flow end-to-end through `main.py` and confirmed its output matches the standalone engine test exactly.
+
+**Files changed:** `config.py`, `models.py`, `services/recommendation_engine.py`, `main.py`, `README.md`
+
+---
+
 ## [12] 2026-09-03 — Implement Phase 6 user input and credit profile
 
 **Why:** Phase 6 of the assignment spec requires interactively asking for an MOS code/title, displaying and validating available skill levels, showing a numbered list of trainings for the user to select completed ones from, then combining the resulting MOS and training equivalencies into a deduplicated potential-credit summary that preserves every source contributing to a duplicated course and doesn't claim credit is guaranteed.

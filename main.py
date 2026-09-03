@@ -6,11 +6,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from exceptions import SourceConversionError
+from exceptions import InvalidSelectionError, SourceConversionError
 from importers.mos_workbook_importer import MOSWorkbookImporter
 from importers.program_workbook_importer import ProgramWorkbookImporter
 from importers.training_docx_importer import TrainingDocxImporter
-from models import MOSCourseEquivalency, ProgramRequirement, TrainingEquivalency
+from models import CreditProfileEntry, MOSCourseEquivalency, ProgramRequirement, TrainingEquivalency
 from repositories.normalized_data_repository import (
     compute_file_hash,
     read_csv,
@@ -19,6 +19,7 @@ from repositories.normalized_data_repository import (
     write_manifest,
 )
 from services.conversion_validator import ConversionValidator
+from services.credit_evaluator import CreditEvaluator
 
 ROOT_DIR = Path(__file__).parent
 SOURCE_DATA_DIR = ROOT_DIR / "source_data"
@@ -135,6 +136,75 @@ def _print_summary(
         print(f"  - [{issue.severity}] {issue.source}/{issue.identifier}: {issue.message}")
 
 
+def _prompt_mos_selection(mos_records: list) -> str:
+    evaluator = CreditEvaluator()
+    while True:
+        query = input("Enter an MOS code or partial title: ").strip()
+        matches = evaluator.find_mos_matches(mos_records, query)
+        if not matches:
+            print(f"No MOS found matching '{query}'. Try again.")
+            continue
+        if len(matches) == 1:
+            code, title = matches[0]
+            print(f"Matched: {code} - {title}")
+            return code
+        print("Multiple MOS codes matched:")
+        for i, (code, title) in enumerate(matches, start=1):
+            print(f"  {i}. {code} - {title}")
+        selection = input("Enter the number of your MOS: ").strip()
+        try:
+            if not selection.isdigit():
+                raise InvalidSelectionError(f"'{selection}' is not a number")
+            return evaluator.select_mos_code(matches, int(selection))
+        except InvalidSelectionError as exc:
+            print(f"Invalid selection: {exc}")
+
+
+def _prompt_skill_level(mos_records: list, mos_code: str) -> str:
+    evaluator = CreditEvaluator()
+    available = evaluator.available_skill_levels(mos_records, mos_code)
+    print(f"Available skill levels for {mos_code}: {', '.join(available)}")
+    while True:
+        skill_level = input("Enter skill level: ").strip()
+        try:
+            return evaluator.validate_skill_level(available, skill_level)
+        except InvalidSelectionError as exc:
+            print(f"Invalid selection: {exc}")
+
+
+def _prompt_training_selection(training_records: list) -> list[str]:
+    evaluator = CreditEvaluator()
+    trainings = evaluator.list_trainings(training_records)
+    print("Completed trainings (enter number(s) separated by commas, or press Enter for none):")
+    for i, (_training_id, branch, name) in enumerate(trainings, start=1):
+        print(f"  {i}. [{branch}] {name}")
+    while True:
+        selection = input("Your selection: ").strip()
+        try:
+            return evaluator.select_trainings(trainings, selection)
+        except InvalidSelectionError as exc:
+            print(f"Invalid selection: {exc}")
+
+
+def _print_credit_profile(profile: list[CreditProfileEntry]) -> None:
+    print()
+    print("POTENTIAL CREDIT SUMMARY")
+    if not profile:
+        print("No potential credit found for the selected MOS/skill level and trainings.")
+    else:
+        for entry in profile:
+            print(f"  {entry.course_id}: {entry.credits} credit(s)  <- {entry.sources}")
+        print(f"Total potential credits: {sum(entry.credits for entry in profile)}")
+    print()
+    print(
+        "NOTE: this is an unofficial estimate based on documented equivalencies only. "
+        "It does not guarantee that credit will be awarded or that it will apply to a "
+        "specific FTCC program. Official decisions require institutional review of "
+        "military documentation, current program requirements, admissions rules, "
+        "credentials, substitutions, and residency requirements."
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="FTCC Military Credit and Program Recommender")
     parser.add_argument(
@@ -182,6 +252,15 @@ def main() -> None:
         for issue in validation_issues:
             print(f"  - [{issue.severity}] {issue.source}/{issue.identifier}: {issue.message}")
         print("Run with --refresh to force reconversion from source files.")
+
+    print()
+    mos_code = _prompt_mos_selection(mos_records)
+    skill_level = _prompt_skill_level(mos_records, mos_code)
+    training_ids = _prompt_training_selection(training_records)
+    profile = CreditEvaluator().build_credit_profile(
+        mos_records, mos_code, skill_level, training_records, training_ids
+    )
+    _print_credit_profile(profile)
 
 
 if __name__ == "__main__":

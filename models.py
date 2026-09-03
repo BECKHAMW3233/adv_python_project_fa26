@@ -83,3 +83,12 @@ class ValidationIssue:
     source: str  # "mos" | "training" | "program"
     identifier: str
     message: str
+
+
+@dataclass
+class CreditProfileEntry:
+    """One course's potential-credit contribution to a veteran's combined MOS + training profile."""
+
+    course_id: str
+    credits: int
+    sources: str  # "; "-joined description of every source that granted credit for this course

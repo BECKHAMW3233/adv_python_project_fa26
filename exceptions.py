@@ -11,3 +11,7 @@ class SourceFileNotFoundError(SourceConversionError):
 
 class WorksheetStructureError(SourceConversionError):
     """Raised when a worksheet's structure cannot be safely interpreted."""
+
+
+class InvalidSelectionError(Exception):
+    """Raised when a user's menu/selection input doesn't correspond to a valid choice."""

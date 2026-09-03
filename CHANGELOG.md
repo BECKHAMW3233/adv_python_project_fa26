@@ -1,5 +1,20 @@
 # Changelog
 
+## [12] 2026-09-03 — Implement Phase 6 user input and credit profile
+
+**Why:** Phase 6 of the assignment spec requires interactively asking for an MOS code/title, displaying and validating available skill levels, showing a numbered list of trainings for the user to select completed ones from, then combining the resulting MOS and training equivalencies into a deduplicated potential-credit summary that preserves every source contributing to a duplicated course and doesn't claim credit is guaranteed.
+
+- Implemented `CreditEvaluator` (`services/credit_evaluator.py`) as pure selection/matching/combination logic with no `input()`/`print()` calls of its own, so it's directly testable without mocking stdin: `find_mos_matches()` (partial code/title search), `select_mos_code()`, `available_skill_levels()`, `validate_skill_level()`, `list_trainings()`, `select_trainings()` (parses comma-separated numbers), and `build_credit_profile()`.
+- `build_credit_profile()` combines the selected MOS/skill-level equivalencies (credits > 0 only) with the selected trainings' equivalencies (resolved credits only, skipping the `credits_unresolved`/`no_equivalency_found` cases) into one profile keyed by course ID. When more than one source grants credit for the same course, every contributing source is preserved in a `sources` string on that one entry and the higher credit value is kept -- the course is never counted twice toward the total.
+- Added `CreditProfileEntry` to `models.py` and `InvalidSelectionError` to `exceptions.py` (raised by the evaluator's validation methods on an out-of-range or unparseable selection).
+- Added the interactive prompting loop to `main.py` (`_prompt_mos_selection`, `_prompt_skill_level`, `_prompt_training_selection`, `_print_credit_profile`), which catches `InvalidSelectionError` and re-prompts rather than crashing. Runs after conversion/loading on every invocation. The credit-summary notice uses the assignment spec's exact "Required Notice" disclaimer text.
+
+Verified two ways: ran every `CreditEvaluator` method directly against the real normalized data (partial-code and partial-title MOS search, no-match and multi-match cases, skill-level listing/validation, training listing/selection including the invalid-number case, and the course-merge case where both an MOS and a training grant credit for the same course -- confirmed it dedupes to one entry with both sources listed rather than two separate rows). Then ran the full interactive flow end-to-end through `main.py` with piped stdin covering: a clean run, an invalid-then-valid MOS query, an invalid-then-valid skill level, an invalid-then-valid training selection, a multi-match MOS selection, and an empty (no trainings) selection -- all produced the same, correct combined profile as the direct logic test.
+
+**Files changed:** `models.py`, `exceptions.py`, `services/credit_evaluator.py`, `main.py`, `README.md`
+
+---
+
 ## [11] 2026-09-03 — Implement Phase 5 conversion validation
 
 **Why:** Phase 5 of the assignment spec requires validating normalized data after conversion, before it's used for recommendations: required fields present, course IDs match the normalized format, credits are numeric/zero/blank/unresolved per schema, MOS/skill-level/course combinations aren't accidentally duplicated, and every program requirement belongs to a known program -- `ConversionValidator` was still an empty stub.

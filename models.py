@@ -50,3 +50,28 @@ class TrainingTableIssue:
     source_file: str
     source_table: str
     message: str
+
+
+@dataclass
+class ProgramRequirement:
+    program_code: str
+    program_title: str
+    credential_type: str
+    catalog_year: str
+    program_total_credits: float | None
+    requirement_group: str
+    requirement_type: str
+    course_id: str
+    course_credits: int
+    source_file: str
+    source_row: int
+    raw_rule_text: str
+    status: str
+    notes: str
+
+
+@dataclass
+class ProgramWorkbookIssue:
+    source_file: str
+    source_row: int
+    message: str

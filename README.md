@@ -4,7 +4,7 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. Implemented so far: the MOS workbook importer (Phase 2) and the training-docx importer (Phase 3), both with working normalization and CSV output. Not yet implemented: the program workbook importer (Phase 4), validation reporting beyond per-source issue lists, user input / credit evaluation (Phase 6), recommendation ranking (Phase 7), and the test suite.
+**Status:** in progress. Implemented so far: the MOS workbook importer (Phase 2), the training-docx importer (Phase 3), and the program workbook importer (Phase 4) -- all three with working normalization and CSV output. Not yet implemented: validation reporting beyond per-source issue lists, user input / credit evaluation (Phase 6), recommendation ranking (Phase 7), and the test suite.
 
 ## Project structure
 
@@ -12,14 +12,14 @@ Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Projec
 docs/                 Assignment brief, grading rubric, background reading
 source_data/          Unmodified files supplied for the project -- MOS workbook,
                        training-equivalency doc, FTCC programs-of-study workbook
-main.py                Entry point, orchestrates the pipeline (currently: MOS + training import)
+main.py                Entry point, orchestrates the pipeline (currently: MOS + training + program import)
 config.py              Recommendation weights and other settings (not yet populated)
 models.py              Normalized-record schema / data models
 exceptions.py          Custom exceptions
 importers/             Source-specific parsers
   mos_workbook_importer.py       Implemented -- parses all 8 MOS worksheets
   training_docx_importer.py      Implemented -- parses the 6 branch equivalency tables
-  program_workbook_importer.py   Not yet implemented
+  program_workbook_importer.py   Implemented -- parses all 10 FTCC programs' requirement rules
 services/              Normalization, validation, credit evaluation, recommendation ranking
   normalizer.py                  Implemented -- course ID / text / credits / hours normalization
   conversion_validator.py        Not yet implemented
@@ -29,8 +29,9 @@ repositories/           Read/write normalized CSV/JSON data
   normalized_data_repository.py  Implemented -- writes dataclass records to CSV
 reports/                Console and exported reports (not yet implemented)
 tests/                  Test suite (not yet started)
-normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv
-conversion_issues/      Generated parsing-issue reports -- currently empty for both sources (no issues found)
+normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv,
+                         program_requirements.csv
+conversion_issues/      Generated parsing-issue reports -- currently empty for all three sources (no issues found)
 logs/                   Generated application logs (runtime, currently empty)
 requirements.txt        Python dependencies (openpyxl, python-docx)
 CHANGELOG.md            Full history of approved changes to this project

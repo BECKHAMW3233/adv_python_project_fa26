@@ -53,3 +53,11 @@ def normalize_hours(raw: str | None) -> int | None:
         return int(float(text))
     except ValueError:
         return None
+
+
+_VALID_COURSE_ID_PATTERN = re.compile(r"^[A-Z]{2,4}\d{3}$")
+
+
+def is_valid_course_id(course_id: str) -> bool:
+    """True if course_id matches the canonical normalized format produced by normalize_course_id."""
+    return bool(_VALID_COURSE_ID_PATTERN.match(course_id))

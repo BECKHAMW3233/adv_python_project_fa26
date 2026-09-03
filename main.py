@@ -18,6 +18,7 @@ from repositories.normalized_data_repository import (
     write_csv,
     write_manifest,
 )
+from services.conversion_validator import ConversionValidator
 
 ROOT_DIR = Path(__file__).parent
 SOURCE_DATA_DIR = ROOT_DIR / "source_data"
@@ -87,6 +88,14 @@ def _load() -> tuple[list, list, list, list, list, list]:
     return mos_records, [], training_records, [], program_records, []
 
 
+def _validate_and_report(
+    mos_records: list, training_records: list, program_records: list
+) -> list:
+    issues = ConversionValidator().validate(mos_records, training_records, program_records)
+    write_csv(issues, CONVERSION_ISSUES_DIR / "validation_issues.csv")
+    return issues
+
+
 def _print_summary(
     mos_records: list,
     mos_issues: list,
@@ -94,6 +103,7 @@ def _print_summary(
     training_issues: list,
     program_records: list,
     program_issues: list,
+    validation_issues: list,
 ) -> None:
     worksheets_converted = len({(r.mos_code, r.source_sheet) for r in mos_records})
     print("SOURCE CONVERSION SUMMARY")
@@ -116,6 +126,13 @@ def _print_summary(
     print(f"Program requirement records:       {len(program_records)}")
     for issue in program_issues:
         print(f"  - row {issue.source_row}: {issue.message}")
+    print()
+    warnings = [i for i in validation_issues if i.severity == "warning"]
+    errors = [i for i in validation_issues if i.severity == "error"]
+    print(f"Warnings:                         {len(warnings)}")
+    print(f"Errors:                           {len(errors)}")
+    for issue in validation_issues:
+        print(f"  - [{issue.severity}] {issue.source}/{issue.identifier}: {issue.message}")
 
 
 def main() -> None:
@@ -140,14 +157,30 @@ def main() -> None:
                 f"{type(exc).__name__}: {exc}\n", encoding="utf-8"
             )
             sys.exit(1)
-        _print_summary(*records)
+        mos_records, mos_issues, training_records, training_issues, program_records, program_issues = records
+        validation_issues = _validate_and_report(mos_records, training_records, program_records)
+        _print_summary(
+            mos_records,
+            mos_issues,
+            training_records,
+            training_issues,
+            program_records,
+            program_issues,
+            validation_issues,
+        )
     else:
         print("Normalized data is current -- loading existing files without reconversion.")
         mos_records, _, training_records, _, program_records, _ = _load()
+        validation_issues = _validate_and_report(mos_records, training_records, program_records)
         print(
             f"Loaded {len(mos_records)} MOS records, {len(training_records)} training records, "
             f"{len(program_records)} program requirement records."
         )
+        warnings = [i for i in validation_issues if i.severity == "warning"]
+        errors = [i for i in validation_issues if i.severity == "error"]
+        print(f"Validation: {len(warnings)} warning(s), {len(errors)} error(s).")
+        for issue in validation_issues:
+            print(f"  - [{issue.severity}] {issue.source}/{issue.identifier}: {issue.message}")
         print("Run with --refresh to force reconversion from source files.")
 
 

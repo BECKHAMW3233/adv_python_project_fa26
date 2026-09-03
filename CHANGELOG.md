@@ -1,5 +1,19 @@
 # Changelog
 
+## [11] 2026-09-03 — Implement Phase 5 conversion validation
+
+**Why:** Phase 5 of the assignment spec requires validating normalized data after conversion, before it's used for recommendations: required fields present, course IDs match the normalized format, credits are numeric/zero/blank/unresolved per schema, MOS/skill-level/course combinations aren't accidentally duplicated, and every program requirement belongs to a known program -- `ConversionValidator` was still an empty stub.
+
+- Implemented `ConversionValidator` (`services/conversion_validator.py`) with per-source checks against all three normalized record types: required identifying fields present; course ID matches the canonical normalized format (added `is_valid_course_id()` to `services/normalizer.py`); credits non-negative; MOS records' (mos_code, skill_level, course_id) combination not duplicated; program records belong to a program with known title/metadata (i.e. a recognized program header); a `warning`-severity check for a training record with no course_id that isn't already explained by `no_equivalency_found` status, and for a program record with `requirement_type=unresolved` that isn't already explained by `manual_review` status -- both are deliberately warnings, not errors, since the record's own status field already documents why.
+- Added a `ValidationIssue` dataclass (`severity`, `source`, `identifier`, `message`) to `models.py`.
+- Wired validation into `main.py` on both code paths (fresh conversion and loading cached normalized data, since Phase 5 says validate "before using it for recommendations" regardless of which path produced the data), writing results to `conversion_issues/validation_issues.csv` and adding the `Warnings:`/`Errors:` summary lines the spec's example conversion summary shows.
+
+Verified two ways: ran the validator against the real converted data (0 issues across all three sources, consistent with the thorough per-importer verification already done) and, to confirm the validator can actually catch problems rather than trivially passing, ran it against synthetic bad records covering all 10 check categories -- all 10 were caught correctly, with no false positive on the one deliberately-legitimate case (a `no_equivalency_found` training record with a blank course_id).
+
+**Files changed:** `models.py`, `services/normalizer.py`, `services/conversion_validator.py`, `main.py`, `README.md`, `conversion_issues/validation_issues.csv`
+
+---
+
 ## [10] 2026-09-03 — Implement Phase 1 first-run/refresh detection
 
 **Why:** Phase 1 of the assignment spec requires the app to detect at startup whether normalized data already exists and is current, rebuild only when source files have actually changed (or normalized output is missing), and load existing normalized data otherwise rather than repeating unnecessary conversion -- `main.py` previously just re-ran all three importers unconditionally on every run.

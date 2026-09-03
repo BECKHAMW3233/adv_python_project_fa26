@@ -4,7 +4,7 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. Implemented so far: the three source importers (Phases 2-4) with working normalization and CSV output, plus first-run/refresh detection (Phase 1) so the app only reconverts when source files actually change. Not yet implemented: validation reporting beyond per-source issue lists (Phase 5), user input / credit evaluation (Phase 6), recommendation ranking (Phase 7), and the test suite.
+**Status:** in progress. Implemented so far: the three source importers (Phases 2-4), first-run/refresh detection (Phase 1), and schema/integrity validation (Phase 5). Not yet implemented: user input / credit evaluation (Phase 6), recommendation ranking (Phase 7), and the test suite.
 
 ## Usage
 
@@ -34,7 +34,8 @@ importers/             Source-specific parsers
   program_workbook_importer.py   Implemented -- parses all 10 FTCC programs' requirement rules
 services/              Normalization, validation, credit evaluation, recommendation ranking
   normalizer.py                  Implemented -- course ID / text / credits / hours normalization
-  conversion_validator.py        Not yet implemented
+  conversion_validator.py        Implemented -- required fields, course ID format, duplicate
+                                  (MOS/skill level/course) detection, unresolved requirement_type
   credit_evaluator.py            Not yet implemented
   recommendation_engine.py       Not yet implemented
 repositories/           Read/write normalized CSV/JSON data
@@ -43,7 +44,8 @@ reports/                Console and exported reports (not yet implemented)
 tests/                  Test suite (not yet started)
 normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv,
                          program_requirements.csv, .conversion_manifest.json (refresh-detection record)
-conversion_issues/      Generated parsing-issue reports -- currently empty for all three sources (no issues found)
+conversion_issues/      Generated parsing-issue reports -- currently empty for all sources and for
+                         validation (no issues found)
 logs/                   Generated application logs (runtime, currently empty)
 requirements.txt        Python dependencies (openpyxl, python-docx)
 CHANGELOG.md            Full history of approved changes to this project

@@ -75,3 +75,11 @@ class ProgramWorkbookIssue:
     source_file: str
     source_row: int
     message: str
+
+
+@dataclass
+class ValidationIssue:
+    severity: str  # "warning" | "error"
+    source: str  # "mos" | "training" | "program"
+    identifier: str
+    message: str

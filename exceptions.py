@@ -1,13 +1,13 @@
 """Custom exceptions."""
 
 
-class MOSMapError(Exception):
-    """Base exception for MOS workbook import failures."""
+class SourceConversionError(Exception):
+    """Base exception for source-file import/conversion failures."""
 
 
-class SourceFileNotFoundError(MOSMapError):
+class SourceFileNotFoundError(SourceConversionError):
     """Raised when a required source file is missing."""
 
 
-class WorksheetStructureError(MOSMapError):
+class WorksheetStructureError(SourceConversionError):
     """Raised when a worksheet's structure cannot be safely interpreted."""

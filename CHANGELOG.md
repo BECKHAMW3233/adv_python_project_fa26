@@ -1,5 +1,20 @@
 # Changelog
 
+## [10] 2026-09-03 — Implement Phase 1 first-run/refresh detection
+
+**Why:** Phase 1 of the assignment spec requires the app to detect at startup whether normalized data already exists and is current, rebuild only when source files have actually changed (or normalized output is missing), and load existing normalized data otherwise rather than repeating unnecessary conversion -- `main.py` previously just re-ran all three importers unconditionally on every run.
+
+- Added `compute_file_hash()`, `read_manifest()`/`write_manifest()`, and `read_csv()` to `repositories/normalized_data_repository.py`. Change detection is content-hash (SHA-256) based rather than file-modification-time based, so a file touched without its content changing doesn't trigger a needless reconversion; the hash of each source file is recorded in `normalized_data/.conversion_manifest.json` after a successful conversion. `read_csv()` reconstructs the correct dataclass type (`MOSCourseEquivalency`, `TrainingEquivalency`, or `ProgramRequirement`) from a previously written CSV, using `typing.get_type_hints()` to resolve each field's real type (including the `int | None` / `float | None` optional fields) for correct coercion.
+- Rewrote `main.py`: on startup it checks whether all three normalized CSVs exist and their manifest matches the current source-file hashes. If either check fails, it converts and writes a fresh manifest; otherwise it loads the existing CSVs instead of re-running the importers. Added a `--refresh` flag to force reconversion regardless.
+- Renamed `exceptions.py`'s `MOSMapError` to `SourceConversionError` -- it's the shared base class for all three importers' exceptions now, not MOS-specific, and the old name was misleading now that `main.py` catches it generically.
+- On a conversion failure (a caught `SourceConversionError`), `main.py` now prints a clear error, writes `conversion_issues/fatal_conversion_error.txt`, and exits cleanly instead of a raw traceback.
+
+Verified by directly exercising all the scenarios the spec's "Refresh logic" testing area calls for: first run (normalized output missing) correctly converts; an unchanged run correctly loads without reconverting; a file with its content unchanged but modification time touched correctly does *not* trigger reconversion (confirming the hash-based, not mtime-based, design); a simulated source-file change (via a deliberately wrong manifest hash, so the real source files were never touched) correctly reconverts and names the changed file; `--refresh` correctly forces reconversion even when nothing changed; and a missing source file correctly raises a catchable `SourceConversionError` rather than crashing. Also verified full CSV write-then-read round-trip equality against real importer output for all three record types (224, 257, and 1230 records) before wiring it into `main.py`.
+
+**Files changed:** `exceptions.py`, `repositories/normalized_data_repository.py`, `main.py`, `README.md`, `normalized_data/.conversion_manifest.json`
+
+---
+
 ## [9] 2026-09-03 — Implement program-workbook importer and normalization pipeline
 
 **Why:** Phase 4 of the assignment spec requires parsing `2026_POS_Reduced.xlsx` -- a printed, report-style export (not a clean table) of FTCC's 10 Programs of Study -- into normalized requirement records, discovering program/group/choice boundaries rather than assuming fixed rows.

@@ -30,3 +30,26 @@ def normalize_credits(raw: object) -> int:
     if isinstance(raw, (int, float)):
         return int(raw)
     return 0
+
+
+_EQUIVALENCY_SPLIT_PATTERN = re.compile(r"[,&]")
+
+
+def split_course_ids(raw: str | None) -> list[str]:
+    """Split a combined equivalency cell (comma/ampersand/line-break separated) into normalized course IDs."""
+    text = normalize_text(raw)
+    if not text:
+        return []
+    pieces = _EQUIVALENCY_SPLIT_PATTERN.split(text)
+    return [normalize_course_id(piece) for piece in pieces if piece.strip()]
+
+
+def normalize_hours(raw: str | None) -> int | None:
+    """Parse a training-table Hours cell to an int; returns None if it isn't a clean number."""
+    text = normalize_text(raw)
+    if not text:
+        return None
+    try:
+        return int(float(text))
+    except ValueError:
+        return None

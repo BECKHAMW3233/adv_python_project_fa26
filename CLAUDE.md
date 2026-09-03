@@ -88,7 +88,8 @@ Claude Code may create temporary/scratch/experimental files **without asking fir
 ## Documentation upkeep
 
 - Don't create a CHANGELOG.md, README.md, or similar doc unprompted — ask first.
-- If this project adopts one of those files later, keep it accurate to approved changes as part of the same change (per the ask-first rule above), not as an unprompted follow-up afterward.
+- `CHANGELOG.md` and `README.md` now exist in this project. **Every approved change to this project's files or structure gets a CHANGELOG.md entry and, where it affects what README.md describes, a README.md update — in the same change, not a separate unprompted follow-up.** This applies to every contributor's Claude Code session, not just the one that set this rule up.
+- If this project adopts another doc file later, apply the same rule to it: keep it accurate to approved changes as part of the same change (per the ask-first rule above), not as an unprompted follow-up afterward.
 
 ### CHANGELOG.md format (if/when one exists)
 

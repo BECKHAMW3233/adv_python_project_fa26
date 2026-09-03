@@ -1,0 +1,6 @@
+# Temp/scratch/experimental files — see CLAUDE.md "Temp / test / scratch files" section.
+# These stay in the working folder for the record but are excluded from GitHub.
+*_temp
+*_temp.*
+*_test
+*_test.*

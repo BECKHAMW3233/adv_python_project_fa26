@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import datetime
 from pathlib import Path
 
 from exceptions import InvalidSelectionError, SourceConversionError
@@ -24,6 +25,7 @@ from repositories.normalized_data_repository import (
     write_csv,
     write_manifest,
 )
+from reports.report_generator import ReportGenerator
 from services.conversion_validator import ConversionValidator
 from services.credit_evaluator import CreditEvaluator
 from services.recommendation_engine import RecommendationEngine
@@ -32,6 +34,7 @@ ROOT_DIR = Path(__file__).parent
 SOURCE_DATA_DIR = ROOT_DIR / "source_data"
 NORMALIZED_DATA_DIR = ROOT_DIR / "normalized_data"
 CONVERSION_ISSUES_DIR = ROOT_DIR / "conversion_issues"
+EXPORTED_REPORTS_DIR = ROOT_DIR / "exported_reports"
 
 MOS_SOURCE = SOURCE_DATA_DIR / "Army_MOS_Maps_Reduced.xlsx"
 TRAINING_SOURCE = SOURCE_DATA_DIR / "Appendix J for website2026 (002).docx"
@@ -300,6 +303,17 @@ def main() -> None:
 
     recommendations = RecommendationEngine().recommend(profile, program_records)
     _print_recommendations(recommendations)
+
+    training_names_by_id = {tid: name for tid, _branch, name in CreditEvaluator().list_trainings(training_records)}
+    selected_training_names = [training_names_by_id[tid] for tid in training_ids]
+    report_text = ReportGenerator().build_report_text(
+        mos_code, skill_level, selected_training_names, profile, recommendations
+    )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_path = EXPORTED_REPORTS_DIR / f"recommendation_report_{mos_code}_{timestamp}.txt"
+    ReportGenerator().export(report_text, report_path)
+    print()
+    print(f"Report exported to: {report_path}")
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. The full pipeline (Phases 1-7) is now implemented and runnable end to end: source conversion, refresh detection, validation, interactive MOS/training selection, potential-credit profiling, and top-3 FTCC program recommendations with exact-course-code matching, weighted scoring, and explanations. Not yet implemented: the `ReportGenerator`'s exportable (non-console) report, and the test suite.
+**Status:** in progress. The full pipeline (Phases 1-7) is implemented and runnable end to end, including an exported recommendation report file written on every run. Not yet implemented: logging and the test suite.
 
 ## Usage
 
@@ -28,8 +28,8 @@ source_data/          Unmodified files supplied for the project -- MOS workbook,
                        training-equivalency doc, FTCC programs-of-study workbook
 main.py                Entry point -- first-run/refresh detection (Phase 1), orchestrates the
                         three importers or loads existing normalized data, runs the interactive
-                        MOS/skill-level/training prompt flow (Phase 6), then displays ranked
-                        program recommendations (Phase 7)
+                        MOS/skill-level/training prompt flow (Phase 6), displays ranked program
+                        recommendations (Phase 7), and exports a report file
 config.py              RECOMMENDATION_WEIGHTS (major_required=3, major_choice=2,
                         general_education_choice=1) -- project settings, kept separate
                         from the converted FTCC program data per the assignment spec
@@ -49,12 +49,16 @@ services/              Normalization, validation, credit evaluation, recommendat
                                   top-3 ranking with tie-breaks, match %, and explanations
 repositories/           Read/write normalized CSV/JSON data
   normalized_data_repository.py  Implemented -- CSV read/write, source-file hashing, refresh manifest
-reports/                Console and exported reports (not yet implemented)
+reports/                Console and exported reports
+  report_generator.py            Implemented -- builds the recommendation report text (also used
+                                  for console display) and writes it to an export file
 tests/                  Test suite (not yet started)
 normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv,
                          program_requirements.csv, .conversion_manifest.json (refresh-detection record)
 conversion_issues/      Generated parsing-issue reports -- currently empty for all sources and for
                          validation (no issues found)
+exported_reports/       Generated per-run recommendation report files (timestamped .txt,
+                         gitignored -- regenerated on every run, not canonical output)
 logs/                   Generated application logs (runtime, currently empty)
 requirements.txt        Python dependencies (openpyxl, python-docx)
 CHANGELOG.md            Full history of approved changes to this project

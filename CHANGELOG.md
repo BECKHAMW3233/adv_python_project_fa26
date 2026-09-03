@@ -1,5 +1,19 @@
 # Changelog
 
+## [14] 2026-09-03 — Implement ReportGenerator and export a recommendation report file
+
+**Why:** the spec's Required Demonstration steps and Deliverables both call for exporting and opening a recommendation report, not just printing to console -- `ReportGenerator` was still an empty stub, and `main.py`'s output only ever went to the terminal.
+
+- Implemented `ReportGenerator` (`reports/report_generator.py`): `build_report_text()` renders the veteran's MOS/skill-level/training selections, the potential-credit summary, and the top-3 program recommendations (matched courses with weights/points, applicable credits, score, match percentage, credits remaining, explanation) as one human-readable text report, closing with the assignment spec's exact "Required Notice" disclaimer text. `export()` writes it to a file.
+- Wired into `main.py`: after displaying recommendations, builds and exports the report to `exported_reports/recommendation_report_<mos_code>_<timestamp>.txt` and prints the file path.
+- Added `exported_reports/` as a new generated-output directory (`.gitkeep` placeholder, matching `normalized_data/`/`conversion_issues/`/`logs/`). Unlike those directories, its `.txt` files are gitignored -- each run produces a new timestamped file, so committing every one would clutter history; a deliberately chosen sample will be committed separately as its own deliverable later.
+
+Verified by generating a report against real converted data (MOS 25B skill level 30, one training selected) and reading the exported file directly: correctly includes the selected training's name (not just its ID), correctly shows the training-sourced course folded into the potential-credit summary and into a program recommendation it happens to apply to, and matches the console output exactly.
+
+**Files changed:** `reports/report_generator.py`, `main.py`, `.gitignore`, `README.md`, `exported_reports/.gitkeep`
+
+---
+
 ## [13] 2026-09-03 — Implement Phase 7 recommendation engine
 
 **Why:** Phase 7 of the assignment spec requires matching a veteran's potential-credit profile against every FTCC program by exact course-code matches, scoring by requirement-type weight, ranking the top 3 with a specific tie-break order, and explaining each match -- the last remaining core pipeline phase.

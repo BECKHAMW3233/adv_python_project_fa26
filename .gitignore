@@ -8,3 +8,7 @@
 # Python bytecode cache
 __pycache__/
 *.pyc
+
+# Per-run exported recommendation reports (timestamped, regenerated on every run) --
+# a deliberately chosen sample is committed separately as its own deliverable.
+exported_reports/*.txt

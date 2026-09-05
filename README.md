@@ -4,20 +4,24 @@
 
 Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Project.docx`](docs/FTCC_Military_Recommender_Revised_Individual_Project.docx). Full history of work on this project: [`CHANGELOG.md`](CHANGELOG.md).
 
-**Status:** in progress. The full pipeline (Phases 1-7) is implemented and runnable end to end, including an exported recommendation report file and an application log written on every run. Not yet implemented: the test suite.
+**Status:** in progress. The full pipeline (Phases 1-7) is implemented and runnable end to end, including an exported recommendation report file, an application log written on every run, and a 63-test suite covering every area the spec's Testing Requirements table lists. `main.py` is a thin entry point over `pipeline.py` (conversion/load/validation) and `cli.py` (interactive prompts/console display), and `ConversionValidator` checks pick-group and program-total structural gaps in addition to field-level issues. A user can enter more than one MOS (a veteran may hold more than one by the time they leave service), and every interactive prompt accepts `back`/`exit` to correct an earlier answer or quit immediately. Not yet implemented: the flowchart, reflection document, full schema/ranking-formula README section, and a deliberately committed sample report.
 
 ## Usage
 
 ```
 python main.py             Convert (if source files are new/changed) and print a summary,
                             or load existing normalized data if it's already current --
-                            then interactively prompt for an MOS and skill level, walk a
-                            branch-first menu to select completed trainings (pick a branch,
-                            select from its trainings shown in a multi-column list sized to
-                            your terminal width, repeat or finish), and print a potential-
-                            credit summary plus the top 3 recommended FTCC programs
+                            then interactively prompt for one or more MOS codes (and each
+                            one's skill level), walk a branch-first menu to select completed
+                            trainings (pick a branch, select from its trainings shown in a
+                            multi-column list sized to your terminal width, repeat or
+                            finish), and print a potential-credit summary plus the top 3
+                            recommended FTCC programs. Every prompt accepts 'back' (return
+                            to the previous step) or 'exit' (quit immediately, no report)
+                            in place of a normal answer.
 python main.py --refresh   Force reconversion from source files regardless of whether
                             normalized data looks current
+python -m pytest tests/    Run the test suite (63 tests; requires pytest, in requirements.txt)
 ```
 
 Change detection is content-hash based (not file-modification-time based), recorded in `normalized_data/.conversion_manifest.json` after each conversion.
@@ -28,10 +32,14 @@ Change detection is content-hash based (not file-modification-time based), recor
 docs/                 Assignment brief, grading rubric, background reading
 source_data/          Unmodified files supplied for the project -- MOS workbook,
                        training-equivalency doc, FTCC programs-of-study workbook
-main.py                Entry point -- first-run/refresh detection (Phase 1), orchestrates the
-                        three importers or loads existing normalized data, runs the interactive
-                        MOS/skill-level/training prompt flow (Phase 6), displays ranked program
-                        recommendations (Phase 7), and exports a report file
+main.py                Entry point -- argument parsing (--refresh), logging setup, and the
+                        top-level sequencing that wires pipeline.py and cli.py together
+pipeline.py             First-run/refresh detection (Phase 1), source conversion via the three
+                        importers, loading existing normalized data, and validation
+cli.py                  Interactive MOS/skill-level/training prompt flow (Phase 6, supports
+                        entering more than one MOS) and console display of the credit
+                        profile and ranked recommendations (Phase 7); every prompt accepts
+                        'back'/'exit' navigation keywords
 config.py              RECOMMENDATION_WEIGHTS (major_required=3, major_choice=2,
                         general_education_choice=1) -- project settings, kept separate
                         from the converted FTCC program data per the assignment spec
@@ -44,7 +52,9 @@ importers/             Source-specific parsers
 services/              Normalization, validation, credit evaluation, recommendation ranking
   normalizer.py                  Implemented -- course ID / text / credits / hours normalization
   conversion_validator.py        Implemented -- required fields, course ID format, duplicate
-                                  (MOS/skill level/course) detection, unresolved requirement_type
+                                  (MOS/skill level/course) detection, unresolved requirement_type,
+                                  choice-type requirements missing a pick-group credit target,
+                                  programs missing a detected total credit count
   credit_evaluator.py            Implemented -- MOS/training matching, branch-menu training
                                   listing, selection validation, deduplicated potential-credit
                                   profile with source lineage
@@ -59,7 +69,10 @@ reports/                Console and exported reports
   report_generator.py            Implemented -- formatted report text (section dividers,
                                   aligned tables, wrapped paragraphs) shared by console display
                                   and the exported file; surplus_note() advisory helper
-tests/                  Test suite (not yet started)
+tests/                  63 tests covering every area the spec's Testing Requirements table
+                         lists (importers, normalization, validation, refresh logic,
+                         evaluation, ranking); fixtures are tiny files built at test time
+                         (conftest.py), not the full supplied source files
 normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv,
                          program_requirements.csv, .conversion_manifest.json (refresh-detection record)
 conversion_issues/      Generated parsing-issue reports -- currently empty for all sources and for
@@ -69,7 +82,7 @@ student_reports/        Generated per-run recommendation report files (timestamp
 logs/                   app.log -- conversion decisions, record counts, warnings/errors,
                          user selections, deduplication, ranking, exports (gitignored,
                          grows across runs; never logs veteran-identifying information)
-requirements.txt        Python dependencies (openpyxl, python-docx)
+requirements.txt        Python dependencies (openpyxl, python-docx, pytest)
 CHANGELOG.md            Full history of approved changes to this project
 ```
 

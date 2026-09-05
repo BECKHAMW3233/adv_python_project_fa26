@@ -100,15 +100,16 @@ class CreditEvaluator:
     def build_credit_profile(
         self,
         mos_records: Sequence[MOSCourseEquivalency],
-        mos_code: str,
-        skill_level: str,
+        mos_selections: Sequence[tuple[str, str]],
         training_records: Sequence[TrainingEquivalency],
         selected_training_ids: Sequence[str],
     ) -> list[CreditProfileEntry]:
-        """Combine the selected MOS/skill-level equivalencies and selected trainings' equivalencies
-        into one deduplicated potential-credit profile. When more than one source grants credit for
-        the same course, every contributing source is preserved and the higher credit value is kept
-        (the same course is only ever counted once toward the total, never summed across sources)."""
+        """Combine the selected MOS/skill-level equivalencies (a veteran may hold more than one
+        MOS by the time they leave service, e.g. after reclassification) and selected trainings'
+        equivalencies into one deduplicated potential-credit profile. When more than one source
+        grants credit for the same course, every contributing source is preserved and the higher
+        credit value is kept (the same course is only ever counted once toward the total, never
+        summed across sources)."""
         by_course: dict[str, CreditProfileEntry] = {}
 
         def _add(course_id: str, credits: int, source: str) -> None:
@@ -121,9 +122,10 @@ class CreditEvaluator:
                 entry.credits = max(entry.credits, credits)
                 entry.sources = f"{entry.sources}; {source}"
 
-        for record in mos_records:
-            if record.mos_code == mos_code and record.skill_level == skill_level:
-                _add(record.course_id, record.credits, f"MOS {mos_code} skill level {skill_level}")
+        for mos_code, skill_level in mos_selections:
+            for record in mos_records:
+                if record.mos_code == mos_code and record.skill_level == skill_level:
+                    _add(record.course_id, record.credits, f"MOS {mos_code} skill level {skill_level}")
 
         selected_ids = set(selected_training_ids)
         for record in training_records:

@@ -1,5 +1,101 @@
 # Changelog
 
+## [26] 2026-09-05 — Add 'exit' and 'back' navigation to every interactive prompt
+
+**Why:** per William's direction -- there was no fast way to quit the program mid-flow, or to correct an earlier answer without restarting the whole interactive session.
+
+- Added `UserExitRequested` and `UserBackRequested` (`exceptions.py`); `cli._check_navigation()` raises the appropriate one whenever a prompt's raw input is `"exit"` or `"back"` (case-insensitive), checked before that prompt tries to parse the input as a real answer. Every `input()` call in `cli.py` now checks for these.
+- Since there's no menu "stack," each prompt either handles `back` locally (retrying its own earlier step) or lets it propagate to its caller, whose loop retries from its own start: the MOS number-selection list retries the MOS query; skill-level entry (no earlier step of its own) propagates up to redo MOS selection; the "Add another MOS?" prompt undoes the MOS just added and lets it be redone; a branch's training-number entry returns to the branch menu; the branch menu itself (top of training selection, nothing earlier within that step) propagates all the way to `main()`, which restarts MOS selection from scratch.
+- `main()` wraps the MOS+training selection phase in a loop: `UserBackRequested` from the training branch menu re-runs MOS selection then re-enters training selection; `UserExitRequested` from anywhere prints a message and ends the program immediately, with no report generated.
+
+Verified with 8 separate manual CLI runs via piped stdin, one per behavior: `exit` at the very first prompt and mid-flow (skill-level entry) both end cleanly with no traceback and exit code 0; `back` at a multi-match MOS list retries the query; `back` during skill-level entry discards the picked MOS and retries MOS selection; `back` at "Add another MOS?" removes the just-added MOS and lets it be re-entered (confirmed the replacement value took effect); `back` at the training branch menu discards the MOS selection(s) made so far and restarts that phase; `back` while picking a branch's trainings returns to the branch menu with the "selected so far" count unchanged; and a plain single-MOS-plus-one-training run (no navigation keywords used) still completes and exports a report identically to before this change. This is pure `input()`-driven interactive logic, so (like the rest of `cli.py`) it isn't covered by the pytest suite; the full 63-test suite was re-run after these changes and still passes.
+
+**Files changed:** `exceptions.py`, `cli.py`, `main.py`
+
+---
+
+## [25] 2026-09-05 — Support entering more than one MOS
+
+**Why:** per William's direction -- some veterans hold more than one MOS by the time they leave service (e.g. after reclassification to a different job), and the app only ever let a user pick one MOS and one skill level.
+
+- `CreditEvaluator.build_credit_profile()` (`services/credit_evaluator.py`) now takes a sequence of `(mos_code, skill_level)` pairs instead of a single pair; it loops over all of them into the same existing per-course dedup logic, so overlapping courses granted by more than one MOS merge exactly the way overlapping MOS/training courses already did (higher credit value kept, every source recorded, never summed).
+- Added `cli.prompt_mos_selections()`: loops "pick an MOS, pick its skill level, ask whether to add another" (mirrors the existing branch-first training loop), accumulating selections; an exact duplicate `(mos_code, skill_level)` re-entry is skipped rather than added twice.
+- `main.py` and `ReportGenerator.build_report_text()` updated to carry the full list of MOS selections through end to end; the exported report's "YOUR SELECTIONS" section now lists one line per MOS, and the report filename includes every selected MOS code (e.g. `recommendation_report_12P-25B_<timestamp>.txt`).
+- `tests/test_credit_evaluator.py`: updated all 6 existing calls for the new signature and added a new test using two genuinely different MOS codes at different skill levels (an earlier draft of this test mistakenly used the same MOS code at two skill levels, which William caught -- it didn't actually exercise the multi-MOS case).
+
+Verified via the full test suite (63 passed) and by running the real CLI end to end with two different MOS codes (12P skill level 30, 25B skill level 40): confirmed the credit profile correctly merges courses from both (including a real overlap, COM120, contributed by both), the exported report lists both MOS lines, and the filename includes both codes.
+
+**Files changed:** `services/credit_evaluator.py`, `cli.py`, `main.py`, `reports/report_generator.py`, `tests/test_credit_evaluator.py`
+
+---
+
+## [24] 2026-09-05 — Split main.py into pipeline.py, cli.py, and a thin entry point
+
+**Why:** William asked me to pick from three "thin spot" improvements I'd identified and said to do all three ("do all 3 please there is not reason oyucnat"); this is the structural one. `main.py` had grown to hold first-run/refresh detection, all three importers' orchestration, validation, the entire interactive prompt flow, and report export/console display in one file, mixing pipeline concerns with CLI concerns.
+
+- Extracted `pipeline.py`: `needs_conversion()` (renamed from `_needs_conversion`, now public since it's called cross-module), `convert()`, `load()`, `validate_and_report()`, `print_summary()`, and every module-level path constant (`SOURCE_DATA_DIR`, `NORMALIZED_DATA_DIR`, `CONVERSION_ISSUES_DIR`, the three source/CSV paths, `MANIFEST_PATH`).
+- Extracted `cli.py`: `print_columns()`, `prompt_mos_selection()`, `prompt_skill_level()`, `prompt_training_selection()`, `print_credit_profile()`, `print_recommendations()` -- all the `input()`/`print()`-driven interactive logic, previously private (`_`-prefixed) functions in `main.py`.
+- Rewrote `main.py` down to argument parsing (`--refresh`), logging setup, and the top-level `main()` sequencing that calls into `pipeline` and `cli`.
+- Updated `tests/test_refresh_logic.py` to target `pipeline.needs_conversion` and monkeypatch `pipeline`'s module constants, since it previously tested `main._needs_conversion` directly and that function no longer lives there.
+
+Verified by running the full test suite after the split (`pytest tests/`: 62 passed, no failures) and an end-to-end CLI smoke test via piped stdin (MOS 12P, skill level 30, no trainings selected), confirming the credit profile, ranked recommendations, and exported report file are produced the same way as before the split; also re-ran with `--refresh` to confirm source conversion, validation, and the summary printout still work through the new `pipeline` module.
+
+**Files changed:** `main.py`, `pipeline.py` (new), `cli.py` (new), `tests/test_refresh_logic.py`
+
+---
+
+## [23] 2026-09-05 — Deepen ConversionValidator; fix a silent pick-group credit bug it surfaced
+
+**Why:** the third of the three approved "thin spot" options -- checking whether the validator catches structural problems specific to the pick-group capping and program-total logic added in [17], not just the generic field-level checks it already had. Running the new checks against the real (reduced) source data surfaced a genuine bug, not just a documentation gap.
+
+- Added two checks to `services/conversion_validator.py`: a `major_choice`/`general_education_choice` requirement with no `choice_group_target_credits` is now an `error` (the [17] pick-group cap can't apply without it, risking double-counted credit); a program with no detected `program_total_credits` is now a `warning`, reported once per program rather than once per row.
+- Running the new check against the real program workbook immediately found 659 real requirement records missing `choice_group_target_credits`. Root-caused and fixed in `importers/program_workbook_importer.py` across three real row patterns, verified by rerunning against the full real data after each fix:
+  - A subgroup's label and its `"> Take N credits"` instruction sometimes land on physically different rows (deep column-based indentation splits them across a row boundary) -- the parser only looked in a small window after the label match on the same row. Now searches the whole blob for a co-located take-value, and separately emits independent "take" events so a cross-row continuation is still found. (659 -> 358)
+  - When the take-instruction's `>` character sits at an earlier blob position than its own subgroup label (an artifact of how fragments get concatenated), position-ordered event dispatch was resetting the value to `None` right after setting it. Removed the reset-then-update pattern entirely -- the subgroup event now computes and sets its own target directly. (358 -> 205)
+  - Some instructions read like `"Take 2 8 credits"` (a stray count number before the real total) -- the intervening-token pattern only skipped letter-words, not numbers. Relaxed it to skip any non-space token, always capturing the number immediately before "credit(s)". (205 -> 0)
+- Added two regression tests to `tests/test_program_workbook_importer.py` covering the cross-row and stray-number cases directly, and three new tests to `tests/test_conversion_validator.py` for the new checks.
+
+Verified: 0 validation issues (warnings or errors) against the full real source data after all three fixes, confirmed by a fresh `--refresh` run; the full 128-combination MOS/skill-level/training sweep from [17] re-run clean; and direct inspection confirming previously-broken pick groups (HUM/FINE Arts, SOC/BEHAV) now correctly cap at their true 3-credit target each rather than summing past it.
+
+**Files changed:** `services/conversion_validator.py`, `importers/program_workbook_importer.py`, `tests/test_conversion_validator.py`, `tests/test_program_workbook_importer.py`, `normalized_data/program_requirements.csv`
+
+---
+
+## [22] 2026-09-05 — Add DocxParsingError, MissingProgramTotalError, ReportExportError
+
+**Why:** the first of three approved "thin spot" options -- three failure paths were using a generic or borrowed exception, or none at all, contrary to the spec's custom-exception requirement: the training docx importer reused `WorksheetStructureError` (an xlsx-specific name) for its own docx-structure failures, a program with no detected total credits had no dedicated exception, and `ReportGenerator.export()`'s file write had no error handling at all.
+
+- Added `DocxParsingError(SourceConversionError)` and switched `importers/training_docx_importer.py` to raise/catch it instead of the borrowed `WorksheetStructureError`.
+- Added `MissingProgramTotalError(SourceConversionError)`; `importers/program_workbook_importer.py` now raises it per program code missing a total at the end of `import_workbook()` and catches it immediately, turning it into a `ProgramWorkbookIssue` (`source_row=-1`) rather than failing the whole conversion.
+- Added `ReportExportError`; `ReportGenerator.export()` now wraps its `Path.write_text()` call and raises it with the underlying `OSError` chained, instead of letting a write failure propagate as a raw `OSError`.
+- Considered and deliberately did not add an `InvalidCourseIdError`: `normalize_course_id()` never actually rejects input (it always returns a normalized string), so a dedicated exception for it would be unused dead code, not a real gap.
+
+Verified via the existing test suite: `test_choice_group_id_and_target_shared_across_options` and `test_unsupported_nested_rule_flagged_manual_review_not_guessed` (`tests/test_program_workbook_importer.py`) both use fixtures with no total-credits footer row, and both still pass without crashing -- confirming `MissingProgramTotalError` is caught into a `ProgramWorkbookIssue` rather than propagating. The `DocxParsingError` and `ReportExportError` paths are exercised indirectly by the existing importer/report test coverage; no new tests were added specifically for the exception rename/additions since the underlying behavior didn't change, only which exception type is raised.
+
+**Files changed:** `exceptions.py`, `importers/training_docx_importer.py`, `importers/program_workbook_importer.py`, `reports/report_generator.py`
+
+---
+
+## [21] 2026-09-05 — Add the test suite (57 tests)
+
+**Why:** the spec requires at least 20 meaningful tests across MOS/training/program importers, normalization, validation, refresh logic, evaluation, and ranking, using small test fixtures created for testing rather than depending only on the full supplied files. `tests/` held nothing but an empty `__init__.py` until now.
+
+- Added `tests/conftest.py`: three fixture builders (`build_mos_workbook`, `build_training_docx`, `build_program_workbook`) that construct tiny xlsx/docx files at test time using openpyxl/python-docx, per William's direction -- nothing binary is committed to the repo; every fixture's exact content is visible as plain Python in the test files themselves.
+- `tests/test_mos_workbook_importer.py` (5): sheet discovery regardless of name, title detection with/without the leading accessibility row, skill-level column mapping, blank-vs-zero-credit handling, and a malformed sheet being reported rather than crashing the run.
+- `tests/test_training_docx_importer.py` (5): branch-heading detection, multiple courses in one equivalency cell, the ampersand separator, narrative paragraphs outside tables being ignored, and combined/ambiguous hours being left unresolved rather than invented.
+- `tests/test_program_workbook_importer.py` (5): program boundaries separating distinct programs, a repeated page header neither resetting the program nor losing a total appended to it, course extraction via both the structured-column and flattened-text paths, a Pick group's `choice_group_id`/target being shared correctly across its options, and an unsupported nested rule (`"1 of 2 Groups"`) being flagged `manual_review` rather than guessed.
+- `tests/test_normalizer.py` (17, several parametrized): course ID variants collapsing to the same canonical form, whitespace/punctuation normalization, credits/hours numeric coercion, equivalency-cell splitting, and course-ID format validation.
+- `tests/test_conversion_validator.py` (7): missing required fields, duplicate MOS/skill/course keys, an unresolved-credit training record correctly excused by its own status vs. one that isn't, bad course-ID format, a program record with no known title, and a fully clean set producing zero issues.
+- `tests/test_refresh_logic.py` (5): missing normalized output, no manifest at all (first run), unchanged source, changed source (naming the file), and `--refresh` forcing conversion regardless. Tests `main._needs_conversion` directly, with its module-level path constants monkeypatched to `tmp_path` fixtures rather than touching the real project's `source_data`/`normalized_data`.
+- `tests/test_credit_evaluator.py` (6): MOS and training equivalencies evaluated independently by selection, source lineage preserved per entry, a course held from multiple sources deduplicating to one entry, that entry keeping the higher credit value rather than summing, correct total across distinct courses, and zero-credit records excluded.
+- `tests/test_recommendation_engine.py` (7): weights applied correctly per requirement type, the [17] pick-group capping behavior (re-tested here as a committed regression test, not just the manual verification from that session), `major_required` matches never capped, descending-score sorting, the full major-required-credits tie-break, zero-match programs excluded outright, and the top-3 limit enforced.
+
+Verified by running the full suite together (`pytest tests/`): all 57 pass with no cross-test interference, in under a second; confirmed `git status` shows only the 9 new test files added, nothing else in the working tree touched by running them.
+
+**Files changed:** `tests/conftest.py`, `tests/test_mos_workbook_importer.py`, `tests/test_training_docx_importer.py`, `tests/test_program_workbook_importer.py`, `tests/test_normalizer.py`, `tests/test_conversion_validator.py`, `tests/test_refresh_logic.py`, `tests/test_credit_evaluator.py`, `tests/test_recommendation_engine.py`, `requirements.txt`, `README.md`
+
+---
+
 ## [20] 2026-09-05 — Multi-column layout for the per-branch training list
 
 **Why:** per William's direction, the per-branch training list (up to 87 entries for ARMY) needed to show in multiple columns instead of one long single-column list, so more of it is visible at once without scrolling.

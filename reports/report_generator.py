@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Sequence
 
+from exceptions import ReportExportError
 from models import CreditProfileEntry, MatchedCourse, ProgramRecommendation
 
 # Verbatim "Required Notice" from the assignment spec.
@@ -49,8 +50,7 @@ class ReportGenerator:
 
     def build_report_text(
         self,
-        mos_code: str,
-        skill_level: str,
+        mos_selections: Sequence[tuple[str, str]],
         training_names: Sequence[str],
         profile: Sequence[CreditProfileEntry],
         recommendations: Sequence[ProgramRecommendation],
@@ -63,14 +63,17 @@ class ReportGenerator:
             "",
             "YOUR SELECTIONS",
             _RULE,
-            f"MOS:                  {mos_code}",
-            f"Skill Level:          {skill_level}",
-            "Completed Trainings:  "
-            + (", ".join(training_names) if training_names else "(none selected)"),
-            "",
-            "POTENTIAL CREDIT SUMMARY",
-            _RULE,
+            "MOS:",
         ]
+        for mos_code, skill_level in mos_selections:
+            lines.append(f"  {mos_code}  (skill level {skill_level})")
+        lines.append(
+            "Completed Trainings:  "
+            + (", ".join(training_names) if training_names else "(none selected)")
+        )
+        lines.append("")
+        lines.append("POTENTIAL CREDIT SUMMARY")
+        lines.append(_RULE)
 
         if not profile:
             lines.append(
@@ -130,5 +133,8 @@ class ReportGenerator:
 
     def export(self, report_text: str, path: Path) -> None:
         """Write the report text to a file, creating parent directories as needed."""
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(report_text, encoding="utf-8")
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(report_text, encoding="utf-8")
+        except OSError as exc:
+            raise ReportExportError(f"Could not export report to {path}: {exc}") from exc

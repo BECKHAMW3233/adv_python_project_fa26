@@ -8,7 +8,7 @@ from pathlib import Path
 import docx
 from docx.table import Table
 
-from exceptions import SourceFileNotFoundError, WorksheetStructureError
+from exceptions import DocxParsingError, SourceFileNotFoundError
 from models import TrainingEquivalency, TrainingTableIssue
 from services.normalizer import normalize_hours, normalize_text, split_course_ids
 
@@ -36,7 +36,7 @@ class TrainingDocxImporter:
                 current_branch = self._parse_table(
                     table, table_name, path.name, current_branch, records
                 )
-            except WorksheetStructureError as exc:
+            except DocxParsingError as exc:
                 issues.append(TrainingTableIssue(path.name, table_name, str(exc)))
 
         return records, issues
@@ -63,7 +63,7 @@ class TrainingDocxImporter:
                 continue
 
             if current_branch is None:
-                raise WorksheetStructureError(
+                raise DocxParsingError(
                     f"Data row in '{table_name}' appeared before any branch heading: {cells}"
                 )
 

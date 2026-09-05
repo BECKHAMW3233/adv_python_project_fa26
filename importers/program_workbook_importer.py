@@ -8,7 +8,7 @@ from pathlib import Path
 
 import openpyxl
 
-from exceptions import SourceFileNotFoundError
+from exceptions import MissingProgramTotalError, SourceFileNotFoundError
 from models import ProgramRequirement, ProgramWorkbookIssue
 from services.normalizer import normalize_text
 
@@ -33,7 +33,9 @@ _STANDALONE_TOTAL_PATTERN = re.compile(r"\(\s*(?P<total>\d+\.\d{2})\s*\)")
 _SUBGROUP_LABEL_PATTERN = re.compile(
     r"(?P<label>[A-Za-z][A-Za-z0-9 /&]*?\b(?:Pick|Courses))\b", re.IGNORECASE
 )
-_TAKE_PATTERN = re.compile(r">\s*Take\s+(?P<credits>\d+)\s+credits?\b", re.IGNORECASE)
+_TAKE_PATTERN = re.compile(
+    r">\s*Take\s+(?:\S+\s+)*?(?P<credits>\d+)\s+credits?\b", re.IGNORECASE
+)
 _NESTED_PATTERN = re.compile(r"\bGroups?\b|\bSubrequirement", re.IGNORECASE)
 _SIMPLE_COURSE_PATTERN = re.compile(r"\b([A-Z]{2,4}-\d{3})\b")
 _FLATTENED_COURSE_PATTERN = re.compile(
@@ -152,21 +154,38 @@ def _collect_events(blob: str, row: tuple, is_structured: bool) -> list[_Event]:
             _Event(position=match.start(), kind="total", total=float(match.group("total")))
         )
 
+    # A subgroup's own "> Take N credits" can appear anywhere in the same blob, not
+    # necessarily right after (or even after at all) the label match itself -- e.g. the
+    # take-instruction's ">" can start before the label match's own start position, because
+    # of how wrapped, multi-column label text gets concatenated. Searching the whole blob
+    # (not a small window near the label) and setting it directly on the subgroup event
+    # avoids needing a separate reset step that a later, unrelated take event could clobber.
+    blob_take_match = _TAKE_PATTERN.search(blob)
+    blob_take_credits = float(blob_take_match.group("credits")) if blob_take_match else None
+
     for match in _SUBGROUP_LABEL_PATTERN.finditer(blob):
         label = normalize_text(match.group("label"))
         subgroup_type = "choice" if re.search(r"\bpick\b", label, re.IGNORECASE) else "direct"
         nested = bool(_NESTED_PATTERN.search(blob[max(0, match.start() - 40) : match.end() + 60]))
-        take_match = _TAKE_PATTERN.search(blob, match.end(), match.end() + 40)
-        target_credits = float(take_match.group("credits")) if take_match else None
         events.append(
             _Event(
                 position=match.start(),
                 kind="subgroup",
                 name=label,
                 subgroup_type=subgroup_type,
-                target_credits=target_credits,
+                target_credits=blob_take_credits,
                 nested=nested,
             )
+        )
+
+    # A subgroup's "> Take N credits" instruction is usually right after its label in the
+    # same row, but for deeply indented groups the label and the take-instruction can land
+    # on two different physical rows entirely (the label alone on one row, "> Take ...
+    # From <first course>" on the next) -- so this is detected independently of any
+    # subgroup match in this same blob, rather than searched for only near one.
+    for match in _TAKE_PATTERN.finditer(blob):
+        events.append(
+            _Event(position=match.start(), kind="take", target_credits=float(match.group("credits")))
         )
 
     if is_structured:
@@ -290,8 +309,13 @@ class ProgramWorkbookImporter:
                 elif event.kind == "subgroup":
                     state.subgroup_label = event.name
                     state.subgroup_type = event.subgroup_type
+                    # event.target_credits is whatever this row's own blob-wide take-search
+                    # found (or None if this group's "> Take N credits" hasn't appeared yet
+                    # -- it may still be on a later row, which a "take" event will then set).
                     state.subgroup_target_credits = event.target_credits
                     state.nested = event.nested
+                elif event.kind == "take":
+                    state.subgroup_target_credits = event.target_credits
                 elif event.kind == "total":
                     program_totals[state.program_code] = event.total
                 elif event.kind == "course":
@@ -331,5 +355,13 @@ class ProgramWorkbookImporter:
 
         for record in records:
             record.program_total_credits = program_totals.get(record.program_code)
+
+        for program_code in {record.program_code for record in records} - program_totals.keys():
+            try:
+                raise MissingProgramTotalError(
+                    f"Program '{program_code}' has no detected total credits"
+                )
+            except MissingProgramTotalError as exc:
+                issues.append(ProgramWorkbookIssue(path.name, -1, str(exc)))
 
         return records, issues

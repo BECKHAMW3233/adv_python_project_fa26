@@ -121,6 +121,7 @@ class ConversionValidator:
         self, records: Sequence[ProgramRequirement]
     ) -> list[ValidationIssue]:
         issues: list[ValidationIssue] = []
+        programs_missing_total: set[str] = set()
         for record in records:
             identifier = f"{record.program_code}/row{record.source_row}/{record.course_id}"
             if not record.program_code or not record.course_id:
@@ -165,6 +166,31 @@ class ConversionValidator:
                         "program",
                         identifier,
                         "Unresolved requirement_type without a manual_review status to explain it",
+                    )
+                )
+            if (
+                record.requirement_type in ("major_choice", "general_education_choice")
+                and record.choice_group_target_credits is None
+            ):
+                issues.append(
+                    ValidationIssue(
+                        "error",
+                        "program",
+                        identifier,
+                        "Choice-type requirement has no choice_group_target_credits -- the "
+                        "pick-group credit cap cannot be applied for this course, risking "
+                        "double-counted credit if another course qualifies for the same group",
+                    )
+                )
+            if record.program_total_credits is None and record.program_code not in programs_missing_total:
+                programs_missing_total.add(record.program_code)
+                issues.append(
+                    ValidationIssue(
+                        "warning",
+                        "program",
+                        record.program_code,
+                        "Program has no detected total credits -- match percentage and "
+                        "credits-remaining estimates will be unavailable for this program",
                     )
                 )
         return issues

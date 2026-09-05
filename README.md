@@ -11,9 +11,10 @@ Full assignment spec: [`docs/FTCC_Military_Recommender_Revised_Individual_Projec
 ```
 python main.py             Convert (if source files are new/changed) and print a summary,
                             or load existing normalized data if it's already current --
-                            then interactively prompt for an MOS, skill level, and
-                            completed trainings, and print a potential-credit summary
-                            plus the top 3 recommended FTCC programs
+                            then interactively prompt for an MOS and skill level, walk a
+                            branch-first menu to select completed trainings (pick a branch,
+                            select from its trainings, repeat or finish), and print a
+                            potential-credit summary plus the top 3 recommended FTCC programs
 python main.py --refresh   Force reconversion from source files regardless of whether
                             normalized data looks current
 ```
@@ -43,10 +44,14 @@ services/              Normalization, validation, credit evaluation, recommendat
   normalizer.py                  Implemented -- course ID / text / credits / hours normalization
   conversion_validator.py        Implemented -- required fields, course ID format, duplicate
                                   (MOS/skill level/course) detection, unresolved requirement_type
-  credit_evaluator.py            Implemented -- MOS/training matching, selection validation,
-                                  deduplicated potential-credit profile with source lineage
+  credit_evaluator.py            Implemented -- MOS/training matching, branch-menu training
+                                  listing, selection validation, deduplicated potential-credit
+                                  profile with source lineage
   recommendation_engine.py       Implemented -- exact course-code matching, weighted scoring,
-                                  top-3 ranking with tie-breaks, match %, and explanations
+                                  pick-group credit capping (a course only counts toward a
+                                  requirement's real target, never summed past what's needed
+                                  across alternatives), top-3 ranking with tie-breaks, match %,
+                                  and explanations
 repositories/           Read/write normalized CSV/JSON data
   normalized_data_repository.py  Implemented -- CSV read/write, source-file hashing, refresh manifest
 reports/                Console and exported reports

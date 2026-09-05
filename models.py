@@ -63,6 +63,8 @@ class ProgramRequirement:
     requirement_type: str
     course_id: str
     course_credits: int
+    choice_group_id: str
+    choice_group_target_credits: float | None
     source_file: str
     source_row: int
     raw_rule_text: str
@@ -109,6 +111,7 @@ class ProgramRecommendation:
     program_title: str
     credential_type: str
     matched_courses: list[MatchedCourse]
+    surplus_courses: list[MatchedCourse]  # qualify but weren't counted -- their pick group's target is already met
     applicable_matched_credits: int
     major_required_credits_matched: int
     recommendation_score: int

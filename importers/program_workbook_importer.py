@@ -33,6 +33,7 @@ _STANDALONE_TOTAL_PATTERN = re.compile(r"\(\s*(?P<total>\d+\.\d{2})\s*\)")
 _SUBGROUP_LABEL_PATTERN = re.compile(
     r"(?P<label>[A-Za-z][A-Za-z0-9 /&]*?\b(?:Pick|Courses))\b", re.IGNORECASE
 )
+_TAKE_PATTERN = re.compile(r">\s*Take\s+(?P<credits>\d+)\s+credits?\b", re.IGNORECASE)
 _NESTED_PATTERN = re.compile(r"\bGroups?\b|\bSubrequirement", re.IGNORECASE)
 _SIMPLE_COURSE_PATTERN = re.compile(r"\b([A-Z]{2,4}-\d{3})\b")
 _FLATTENED_COURSE_PATTERN = re.compile(
@@ -49,6 +50,7 @@ class _State:
     requirement_group: str = ""
     subgroup_label: str = ""
     subgroup_type: str = ""  # "direct" | "choice" | ""
+    subgroup_target_credits: float | None = None
     nested: bool = False
 
 
@@ -58,6 +60,7 @@ class _Event:
     kind: str  # "group" | "subgroup" | "total" | "course"
     name: str = ""
     subgroup_type: str = ""
+    target_credits: float | None = None
     nested: bool = False
     total: float | None = None
     course_id: str = ""
@@ -153,12 +156,15 @@ def _collect_events(blob: str, row: tuple, is_structured: bool) -> list[_Event]:
         label = normalize_text(match.group("label"))
         subgroup_type = "choice" if re.search(r"\bpick\b", label, re.IGNORECASE) else "direct"
         nested = bool(_NESTED_PATTERN.search(blob[max(0, match.start() - 40) : match.end() + 60]))
+        take_match = _TAKE_PATTERN.search(blob, match.end(), match.end() + 40)
+        target_credits = float(take_match.group("credits")) if take_match else None
         events.append(
             _Event(
                 position=match.start(),
                 kind="subgroup",
                 name=label,
                 subgroup_type=subgroup_type,
+                target_credits=target_credits,
                 nested=nested,
             )
         )
@@ -284,6 +290,7 @@ class ProgramWorkbookImporter:
                 elif event.kind == "subgroup":
                     state.subgroup_label = event.name
                     state.subgroup_type = event.subgroup_type
+                    state.subgroup_target_credits = event.target_credits
                     state.nested = event.nested
                 elif event.kind == "total":
                     program_totals[state.program_code] = event.total
@@ -303,6 +310,12 @@ class ProgramWorkbookImporter:
                             requirement_type=requirement_type,
                             course_id=event.course_id,
                             course_credits=event.credits or 0,
+                            choice_group_id=(
+                                f"{state.program_code}::{state.subgroup_label}"
+                                if state.subgroup_label
+                                else ""
+                            ),
+                            choice_group_target_credits=state.subgroup_target_credits,
                             source_file=path.name,
                             source_row=row_index,
                             raw_rule_text=blob,

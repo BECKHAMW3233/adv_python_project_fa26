@@ -231,17 +231,49 @@ def _prompt_skill_level(mos_records: list, mos_code: str) -> str:
 
 
 def _prompt_training_selection(training_records: list) -> list[str]:
+    """Branch-first menu: pick a branch, select trainings from its (much shorter) list, then
+    either pick another branch or finish. Selections accumulate across branches. Kept as a
+    menu rather than one flat list of all trainings, since that list is expected to keep
+    growing as more branches/schools are added to the source data over the semester."""
     evaluator = CreditEvaluator()
-    trainings = evaluator.list_trainings(training_records)
-    print("Completed trainings (enter number(s) separated by commas, or press Enter for none):")
-    for i, (_training_id, branch, name) in enumerate(trainings, start=1):
-        print(f"  {i}. [{branch}] {name}")
+    branches = evaluator.list_branches(training_records)
+    done_choice = len(branches) + 1
+    selected_ids: list[str] = []
+
     while True:
-        selection = input("Your selection: ").strip()
+        print()
+        print("Select a branch to see its trainings:")
+        for i, branch in enumerate(branches, start=1):
+            print(f"  {i}. {branch}")
+        print(f"  {done_choice}. Done -- finish training selection ({len(selected_ids)} selected so far)")
+        choice = input("Your selection: ").strip()
+
+        if not choice.isdigit():
+            print(f"Invalid selection: '{choice}' is not a number")
+            continue
+        choice_num = int(choice)
+        if choice_num == done_choice:
+            return selected_ids
         try:
-            return evaluator.select_trainings(trainings, selection)
+            branch = evaluator.select_branch(branches, choice_num)
         except InvalidSelectionError as exc:
             print(f"Invalid selection: {exc}")
+            continue
+
+        branch_trainings = evaluator.list_trainings_for_branch(training_records, branch)
+        print(f"Completed {branch} trainings (enter number(s) separated by commas, or press Enter for none):")
+        for i, (_training_id, _branch, name) in enumerate(branch_trainings, start=1):
+            print(f"  {i}. {name}")
+        while True:
+            selection = input("Your selection: ").strip()
+            try:
+                new_ids = evaluator.select_trainings(branch_trainings, selection)
+                break
+            except InvalidSelectionError as exc:
+                print(f"Invalid selection: {exc}")
+        for training_id in new_ids:
+            if training_id not in selected_ids:
+                selected_ids.append(training_id)
 
 
 def _print_credit_profile(profile: list[CreditProfileEntry]) -> None:

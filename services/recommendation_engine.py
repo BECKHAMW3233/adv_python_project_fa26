@@ -53,10 +53,13 @@ class RecommendationEngine:
         # A course can appear under more than one requirement group in the same program
         # (e.g. both a direct major requirement and, elsewhere, an elective choice); when
         # that happens, the higher-weighted classification is the one actually usable, so
-        # keep the best match per course rather than the first one encountered.
+        # keep the best match per course rather than the first one encountered. A row
+        # flagged manual_review (an unmodeled nested choice structure) is never scored,
+        # even if its requirement_type happens to resolve to a known category -- the spec
+        # says not to guess an unsafe classification into the weighted score.
         best_match: dict[str, ProgramRequirement] = {}
         for record in records:
-            if record.course_id not in profile_credits:
+            if record.course_id not in profile_credits or record.status == "manual_review":
                 continue
             weight = RECOMMENDATION_WEIGHTS.get(record.requirement_type)
             if weight is None:
@@ -68,18 +71,12 @@ class RecommendationEngine:
         if not best_match:
             return None  # programs with no exact matches are not ranked at all
 
-        matched_courses = [
-            MatchedCourse(
-                course_id=record.course_id,
-                credits=profile_credits[record.course_id],
-                requirement_type=record.requirement_type,
-                weight=RECOMMENDATION_WEIGHTS[record.requirement_type],
-                ranking_points=profile_credits[record.course_id]
-                * RECOMMENDATION_WEIGHTS[record.requirement_type],
-            )
-            for record in best_match.values()
-        ]
-        matched_courses.sort(key=lambda m: m.course_id)
+        counted, surplus = self._apply_choice_group_caps(profile_credits, best_match.values())
+        if not counted:
+            return None
+
+        matched_courses = self._to_matched_courses(profile_credits, counted)
+        surplus_courses = self._to_matched_courses(profile_credits, surplus)
 
         applicable_matched_credits = sum(m.credits for m in matched_courses)
         score = sum(m.ranking_points for m in matched_courses)
@@ -101,16 +98,74 @@ class RecommendationEngine:
             program_title=first.program_title,
             credential_type=first.credential_type,
             matched_courses=matched_courses,
+            surplus_courses=surplus_courses,
             applicable_matched_credits=applicable_matched_credits,
             major_required_credits_matched=major_required_credits,
             recommendation_score=score,
             match_percentage=match_percentage,
             program_total_credits=program_total,
             estimated_credits_remaining=credits_remaining,
-            explanation=self._explain(matched_courses, applicable_matched_credits),
+            explanation=self._explain(matched_courses, surplus_courses, applicable_matched_credits),
         )
 
-    def _explain(self, matched_courses: list[MatchedCourse], applicable_matched_credits: int) -> str:
+    def _apply_choice_group_caps(
+        self, profile_credits: dict[str, int], matches: Sequence[ProgramRequirement]
+    ) -> tuple[list[ProgramRequirement], list[ProgramRequirement]]:
+        """A pick group (e.g. "take 3 credits" from a list of alternatives) is satisfied
+        once real, whole matched courses -- at their full credit value, highest first --
+        add up to its target; further qualifying courses in that same group aren't needed
+        and don't count again. major_required matches are independently needed and are
+        never grouped or capped."""
+        independent: list[ProgramRequirement] = []
+        grouped: dict[str, list[ProgramRequirement]] = {}
+        for record in matches:
+            if record.requirement_type == "major_required" or not record.choice_group_id:
+                independent.append(record)
+            else:
+                grouped.setdefault(record.choice_group_id, []).append(record)
+
+        counted = list(independent)
+        surplus: list[ProgramRequirement] = []
+        for group_records in grouped.values():
+            target = group_records[0].choice_group_target_credits
+            ordered = sorted(
+                group_records,
+                key=lambda r: (profile_credits[r.course_id], r.course_id),
+                reverse=True,
+            )
+            running_total = 0.0
+            for record in ordered:
+                if target is not None and running_total >= target:
+                    surplus.append(record)
+                    continue
+                counted.append(record)
+                running_total += profile_credits[record.course_id]
+
+        return counted, surplus
+
+    def _to_matched_courses(
+        self, profile_credits: dict[str, int], records: Sequence[ProgramRequirement]
+    ) -> list[MatchedCourse]:
+        courses = [
+            MatchedCourse(
+                course_id=record.course_id,
+                credits=profile_credits[record.course_id],
+                requirement_type=record.requirement_type,
+                weight=RECOMMENDATION_WEIGHTS[record.requirement_type],
+                ranking_points=profile_credits[record.course_id]
+                * RECOMMENDATION_WEIGHTS[record.requirement_type],
+            )
+            for record in records
+        ]
+        courses.sort(key=lambda m: m.course_id)
+        return courses
+
+    def _explain(
+        self,
+        matched_courses: list[MatchedCourse],
+        surplus_courses: list[MatchedCourse],
+        applicable_matched_credits: int,
+    ) -> str:
         counts: dict[str, int] = {}
         for match in matched_courses:
             counts[match.requirement_type] = counts.get(match.requirement_type, 0) + 1
@@ -118,7 +173,16 @@ class RecommendationEngine:
             f"{count} as {_REQUIREMENT_TYPE_LABELS[req_type]}"
             for req_type, count in counts.items()
         ]
-        return (
+        explanation = (
             f"{len(matched_courses)} course(s) matched exactly ({'; '.join(parts)}), "
             f"worth {applicable_matched_credits} potential credit(s) toward this program."
         )
+        if surplus_courses:
+            surplus_ids = ", ".join(m.course_id for m in surplus_courses)
+            explanation += (
+                f" You also hold {surplus_ids}, which qualifies for the same requirement "
+                "but isn't counted since it's already satisfied -- consult an FTCC advisor "
+                "about which option best fits your plans if you intend to transfer to a "
+                "4-year program."
+            )
+        return explanation

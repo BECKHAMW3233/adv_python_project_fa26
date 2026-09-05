@@ -1,5 +1,33 @@
 # Changelog
 
+## [18] 2026-09-05 — Branch-first menu for training selection
+
+**Why:** per William's direction, the training-selection step should be a menu (pick a branch, then see its trainings) rather than one flat numbered list of all 118 trainings, since that list is expected to keep growing as more branches/schools are added later this semester and a single flat list won't scale.
+
+- Added `list_branches()`, `select_branch()`, and `list_trainings_for_branch()` to `CreditEvaluator` (same pure-logic-only pattern as its other selection methods -- no `input()`/`print()`, so they're directly testable).
+- Rewrote `main.py`'s `_prompt_training_selection()`: shows a short numbered list of branches (ARMY, COAST GUARD, MARINES, NATIONAL GUARD, NAVY) plus a "Done" option; picking a branch shows only that branch's trainings for selection; after selecting (or pressing Enter for none), it loops back to the branch menu so the user can pick another branch or finish. Selections accumulate (deduplicated) across as many branches as the user visits.
+
+Verified by running the full interactive flow via piped stdin: selecting one training from ARMY then one from MARINES and confirming both accumulate correctly and both appear by name in the exported report (one contributes real credit, the other legitimately contributes zero since it's an unresolved multi-course training from Phase 3 -- confirmed that's expected behavior, not a bug in the new menu); the immediate-"Done" path (no trainings selected); and invalid branch-menu input (non-numeric and out-of-range) correctly re-prompting rather than crashing.
+
+**Files changed:** `services/credit_evaluator.py`, `main.py`
+
+---
+
+## [17] 2026-09-05 — Fix pick-group credit double-counting; exclude manual_review from scoring
+
+**Why:** William identified that when a veteran holds credit for more than one course satisfying the same "pick one/pick N" program requirement (e.g. an MOS granting both MAT143 and MAT171, which both satisfy Information Technology's single 3-credit math requirement), the recommendation engine was counting every matching course independently and summing their credits/scores -- overstating both figures for a requirement that can only actually be satisfied once (or up to its own stated credit target, for a larger elective pool). Resolving the correct rule took real back-and-forth (see this session's transcript) and research into how real degree-audit systems (DegreeWorks' "best fit" placement, the "bucket" analogy) and transfer-credit evaluation actually handle this, since an initial proposal to cap an individual course's own credit value at the requirement's nominal minimum was wrong and would have silently discarded real credit.
+
+- Added `choice_group_id` and `choice_group_target_credits` to `ProgramRequirement` (`models.py`), and to `importers/program_workbook_importer.py`: the parser already detected a subgroup's `"> Take N credits"` instruction but discarded the number -- it's now captured and stamped onto every course parsed under that subgroup, identifying which specific pick group each course option belongs to and what that group's target credit total is.
+- Rewrote `RecommendationEngine._score_program()`: `major_choice`/`general_education_choice` matches are now grouped by `choice_group_id`; within each group, real courses are added at their full, uncapped credit value -- highest value first (the documented tie-break, since which specific course to prefer is genuinely a local policy choice with no universal standard, confirmed by research) -- until the group's target is met or exceeded, then no further courses from that same group are added. `major_required` matches are never grouped or capped, since each is independently needed rather than an alternative to the others.
+- Excluded courses aren't discarded from the veteran's record -- they're returned as `surplus_courses` on `ProgramRecommendation` and folded into the recommendation's explanation as "you also hold X, which qualifies for the same requirement but isn't counted since it's already satisfied," including a note to consult an FTCC advisor about which option best fits a 4-year transfer plan, since this app has no per-course transfer-articulation data to decide that automatically.
+- Related bug fixed in the same code: a `status=manual_review` row (an unmodeled nested choice structure) could still be scored if its `requirement_type` happened to resolve to a known category, contrary to the spec's instruction not to guess an unsafe classification into the weighted score. `_score_program` now excludes `manual_review` rows outright.
+
+Verified extensively: the real MAT143/MAT171-style overlap (Information Technology's math pick group) now correctly shows 4 matched credits instead of 7, with MAT143 reported as surplus; a 4-way equal-value overlap (CIS110/CIS115/NOS110/WEB110) now correctly counts only 1 course instead of summing all 4; the 3 known `manual_review` rows were confirmed to never contribute to any score even when directly targeted; a sweep of all 8 MOS codes across every available skill level, crossed with 0/1/3/10 selected trainings (128 combinations total), ran with 0 errors and correctly triggered the new cap/surplus logic in 48 of the resulting recommendations; and a genuine, naturally-occurring real-data overlap (MOS 68W skill level 30 granting 4 EMS courses that all satisfy Emergency Medical Science's "MAJ Req BIO Pick" group) was run through the actual CLI end to end and produced the correct capped result with no synthetic data involved.
+
+**Files changed:** `models.py`, `importers/program_workbook_importer.py`, `services/recommendation_engine.py`, `normalized_data/program_requirements.csv`
+
+---
+
 ## [16] 2026-09-05 — Rename the exported-report output folder to student_reports
 
 **Why:** per William's instruction, the generated recommendation report files should live in a folder named `student_reports/` rather than `exported_reports/`.

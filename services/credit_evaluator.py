@@ -59,6 +59,23 @@ class CreditEvaluator:
             )
         return sorted(seen.values(), key=lambda item: (item[1], item[2]))
 
+    def list_branches(self, training_records: Sequence[TrainingEquivalency]) -> list[str]:
+        """Distinct branches present in the training data, sorted."""
+        return sorted({record.branch for record in training_records})
+
+    def select_branch(self, branches: Sequence[str], selection: int) -> str:
+        if not (1 <= selection <= len(branches)):
+            raise InvalidSelectionError(
+                f"'{selection}' is not a valid choice (expected 1-{len(branches)})"
+            )
+        return branches[selection - 1]
+
+    def list_trainings_for_branch(
+        self, training_records: Sequence[TrainingEquivalency], branch: str
+    ) -> list[tuple[str, str, str]]:
+        """Distinct (training_id, branch, training_name) trainings for one branch only."""
+        return [t for t in self.list_trainings(training_records) if t[1] == branch]
+
     def select_trainings(
         self, trainings: Sequence[tuple[str, str, str]], selection_text: str
     ) -> list[str]:

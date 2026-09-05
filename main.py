@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -230,6 +231,27 @@ def _prompt_skill_level(mos_records: list, mos_code: str) -> str:
             print(f"Invalid selection: {exc}")
 
 
+def _print_columns(items: list[str]) -> None:
+    """Print a numbered list in a multi-column grid (top-to-bottom per column, then wrapping
+    right) so a long list fits on screen without one item per line. Column width is capped
+    rather than sized to the single longest item, since a handful of unusually long names
+    would otherwise force everything down to one column -- the rare long entry just spills
+    into the next column's space on its own row instead."""
+    if not items:
+        return
+    terminal_width = shutil.get_terminal_size(fallback=(100, 24)).columns
+    col_width = min(max(len(item) for item in items) + 2, 46)
+    columns = max(1, terminal_width // col_width)
+    rows = -(-len(items) // columns)  # ceil division
+    for row in range(rows):
+        line = ""
+        for col in range(columns):
+            index = col * rows + row
+            if index < len(items):
+                line += items[index].ljust(col_width)
+        print(line.rstrip())
+
+
 def _prompt_training_selection(training_records: list) -> list[str]:
     """Branch-first menu: pick a branch, select trainings from its (much shorter) list, then
     either pick another branch or finish. Selections accumulate across branches. Kept as a
@@ -262,8 +284,9 @@ def _prompt_training_selection(training_records: list) -> list[str]:
 
         branch_trainings = evaluator.list_trainings_for_branch(training_records, branch)
         print(f"Completed {branch} trainings (enter number(s) separated by commas, or press Enter for none):")
-        for i, (_training_id, _branch, name) in enumerate(branch_trainings, start=1):
-            print(f"  {i}. {name}")
+        _print_columns(
+            [f"{i}. {name}" for i, (_training_id, _branch, name) in enumerate(branch_trainings, start=1)]
+        )
         while True:
             selection = input("Your selection: ").strip()
             try:

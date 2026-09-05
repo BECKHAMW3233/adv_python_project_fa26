@@ -1,5 +1,18 @@
 # Changelog
 
+## [20] 2026-09-05 — Multi-column layout for the per-branch training list
+
+**Why:** per William's direction, the per-branch training list (up to 87 entries for ARMY) needed to show in multiple columns instead of one long single-column list, so more of it is visible at once without scrolling.
+
+- Added `_print_columns()` to `main.py`: prints a numbered list as a column-major grid (fills top-to-bottom within a column, then wraps to the next column right), using the real terminal width (`shutil.get_terminal_size()`, falling back to 100 columns when not attached to a real terminal). Column width is capped at 46 characters rather than sized to the single longest entry -- checked the actual data first: ARMY's 87 entries have a median length of 33 characters and only 8 exceed 45, so sizing every column to fit the single longest one (62 characters, one outlier) would have forced the whole list down to one column for no real benefit. The rare long entry just spills slightly into the next column's space on its own row instead.
+- Wired into `_prompt_training_selection()`'s per-branch training display, replacing the one-item-per-line loop.
+
+Verified by running the real ARMY list (87 entries, now 44 rows across 2 columns instead of 87 rows in 1) at an explicit 120-column width and again with no terminal attached (fallback width), confirming both render the same layout; checked a short branch (NATIONAL GUARD, 4 entries) splits cleanly into 2x2 rather than looking awkward; and re-ran a full MOS/skill-level/training selection end to end to confirm no regressions elsewhere in the flow.
+
+**Files changed:** `main.py`
+
+---
+
 ## [19] 2026-09-05 — Redesign the exported recommendation report format
 
 **Why:** per William's direction, the exported report needed a real visual format (section dividers, aligned tables, wrapped paragraphs) rather than a flat text dump -- the previous version ran the match explanation and the "you also hold X" surplus note together into one dense run-on paragraph and used a raw ISO timestamp.

@@ -13,8 +13,9 @@ python main.py             Convert (if source files are new/changed) and print a
                             or load existing normalized data if it's already current --
                             then interactively prompt for an MOS and skill level, walk a
                             branch-first menu to select completed trainings (pick a branch,
-                            select from its trainings, repeat or finish), and print a
-                            potential-credit summary plus the top 3 recommended FTCC programs
+                            select from its trainings shown in a multi-column list sized to
+                            your terminal width, repeat or finish), and print a potential-
+                            credit summary plus the top 3 recommended FTCC programs
 python main.py --refresh   Force reconversion from source files regardless of whether
                             normalized data looks current
 ```

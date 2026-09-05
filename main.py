@@ -35,7 +35,7 @@ ROOT_DIR = Path(__file__).parent
 SOURCE_DATA_DIR = ROOT_DIR / "source_data"
 NORMALIZED_DATA_DIR = ROOT_DIR / "normalized_data"
 CONVERSION_ISSUES_DIR = ROOT_DIR / "conversion_issues"
-EXPORTED_REPORTS_DIR = ROOT_DIR / "exported_reports"
+STUDENT_REPORTS_DIR = ROOT_DIR / "student_reports"
 LOGS_DIR = ROOT_DIR / "logs"
 
 logger = logging.getLogger(__name__)
@@ -376,7 +376,7 @@ def main() -> None:
         mos_code, skill_level, selected_training_names, profile, recommendations
     )
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_path = EXPORTED_REPORTS_DIR / f"recommendation_report_{mos_code}_{timestamp}.txt"
+    report_path = STUDENT_REPORTS_DIR / f"recommendation_report_{mos_code}_{timestamp}.txt"
     ReportGenerator().export(report_text, report_path)
     logger.info("Report exported: %s", report_path)
     print()

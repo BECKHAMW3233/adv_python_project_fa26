@@ -57,7 +57,7 @@ normalized_data/        Generated normalized output -- mos_equivalencies.csv, tr
                          program_requirements.csv, .conversion_manifest.json (refresh-detection record)
 conversion_issues/      Generated parsing-issue reports -- currently empty for all sources and for
                          validation (no issues found)
-exported_reports/       Generated per-run recommendation report files (timestamped .txt,
+student_reports/        Generated per-run recommendation report files (timestamped .txt,
                          gitignored -- regenerated on every run, not canonical output)
 logs/                   app.log -- conversion decisions, record counts, warnings/errors,
                          user selections, deduplication, ranking, exports (gitignored,

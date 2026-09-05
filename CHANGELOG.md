@@ -1,5 +1,17 @@
 # Changelog
 
+## [16] 2026-09-05 — Rename the exported-report output folder to student_reports
+
+**Why:** per William's instruction, the generated recommendation report files should live in a folder named `student_reports/` rather than `exported_reports/`.
+
+- Renamed the directory (`git mv` on its `.gitkeep`, so it's a tracked rename rather than a delete+add), updated `main.py`'s `STUDENT_REPORTS_DIR` constant and the report-export path, and updated the matching `.gitignore` rule (`student_reports/*.txt`) and `README.md`.
+
+Verified by running the full pipeline and confirming the report file is written to `student_reports/` under the same `recommendation_report_<mos_code>_<timestamp>.txt` naming as before.
+
+**Files changed:** `main.py`, `.gitignore`, `README.md`, `student_reports/.gitkeep` (renamed from `exported_reports/.gitkeep`)
+
+---
+
 ## [15] 2026-09-03 — Add application logging
 
 **Why:** the spec requires logging conversion decisions, warnings, errors, record counts, selections, deduplication, ranking, and exports (never sensitive personal information) -- nothing logged anywhere until now.

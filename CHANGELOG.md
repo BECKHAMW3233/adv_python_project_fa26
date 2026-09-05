@@ -1,5 +1,18 @@
 # Changelog
 
+## [19] 2026-09-05 — Redesign the exported recommendation report format
+
+**Why:** per William's direction, the exported report needed a real visual format (section dividers, aligned tables, wrapped paragraphs) rather than a flat text dump -- the previous version ran the match explanation and the "you also hold X" surplus note together into one dense run-on paragraph and used a raw ISO timestamp.
+
+- Rewrote `ReportGenerator.build_report_text()` (`reports/report_generator.py`): `====`/`----` section dividers (YOUR SELECTIONS, POTENTIAL CREDIT SUMMARY, TOP PROGRAM RECOMMENDATIONS, IMPORTANT NOTICE), an aligned `Course / Credits / Source` table for the credit summary and an aligned matched-courses table per program, a human-readable generated-date format (`September 05, 2026 at 02:59 AM` instead of ISO), and paragraphs wrapped to 80 columns via `textwrap` instead of one unbroken line.
+- Extracted the "also holds surplus courses" advisory into a shared `surplus_note()` function, built directly from `ProgramRecommendation.surplus_courses` (already-structured data from the [17] capping fix) rather than a string baked into `RecommendationEngine._explain()` that callers would have had to re-parse to reformat. `_explain()` now returns only the match-summary sentence; `main.py`'s console display and the exported report both call `surplus_note()` themselves, so they stay consistent without duplicating the wording.
+
+Verified by generating a real report from a live run (MOS 68W, no trainings) and reading the actual exported file, sent to William directly for review before committing; re-ran the full 128-combination MOS/skill-level/training sweep with report generation included (0 errors); confirmed console output still shows the surplus note correctly on its own line after the explanation-vs-note split; and reconfirmed the validator still reports 0 issues.
+
+**Files changed:** `reports/report_generator.py`, `services/recommendation_engine.py`, `main.py`
+
+---
+
 ## [18] 2026-09-05 — Branch-first menu for training selection
 
 **Why:** per William's direction, the training-selection step should be a menu (pick a branch, then see its trainings) rather than one flat numbered list of all 118 trainings, since that list is expected to keep growing as more branches/schools are added later this semester and a single flat list won't scale.

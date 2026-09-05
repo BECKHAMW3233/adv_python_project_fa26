@@ -55,8 +55,9 @@ services/              Normalization, validation, credit evaluation, recommendat
 repositories/           Read/write normalized CSV/JSON data
   normalized_data_repository.py  Implemented -- CSV read/write, source-file hashing, refresh manifest
 reports/                Console and exported reports
-  report_generator.py            Implemented -- builds the recommendation report text (also used
-                                  for console display) and writes it to an export file
+  report_generator.py            Implemented -- formatted report text (section dividers,
+                                  aligned tables, wrapped paragraphs) shared by console display
+                                  and the exported file; surplus_note() advisory helper
 tests/                  Test suite (not yet started)
 normalized_data/        Generated normalized output -- mos_equivalencies.csv, training_equivalencies.csv,
                          program_requirements.csv, .conversion_manifest.json (refresh-detection record)

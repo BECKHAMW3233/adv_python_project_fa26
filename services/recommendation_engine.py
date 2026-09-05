@@ -105,7 +105,7 @@ class RecommendationEngine:
             match_percentage=match_percentage,
             program_total_credits=program_total,
             estimated_credits_remaining=credits_remaining,
-            explanation=self._explain(matched_courses, surplus_courses, applicable_matched_credits),
+            explanation=self._explain(matched_courses, applicable_matched_credits),
         )
 
     def _apply_choice_group_caps(
@@ -160,12 +160,10 @@ class RecommendationEngine:
         courses.sort(key=lambda m: m.course_id)
         return courses
 
-    def _explain(
-        self,
-        matched_courses: list[MatchedCourse],
-        surplus_courses: list[MatchedCourse],
-        applicable_matched_credits: int,
-    ) -> str:
+    def _explain(self, matched_courses: list[MatchedCourse], applicable_matched_credits: int) -> str:
+        """Just the match summary -- the "also holds surplus courses" advisory is built
+        separately by callers directly from ProgramRecommendation.surplus_courses, which is
+        already structured data, rather than baked into this string for them to re-parse."""
         counts: dict[str, int] = {}
         for match in matched_courses:
             counts[match.requirement_type] = counts.get(match.requirement_type, 0) + 1
@@ -173,16 +171,7 @@ class RecommendationEngine:
             f"{count} as {_REQUIREMENT_TYPE_LABELS[req_type]}"
             for req_type, count in counts.items()
         ]
-        explanation = (
+        return (
             f"{len(matched_courses)} course(s) matched exactly ({'; '.join(parts)}), "
             f"worth {applicable_matched_credits} potential credit(s) toward this program."
         )
-        if surplus_courses:
-            surplus_ids = ", ".join(m.course_id for m in surplus_courses)
-            explanation += (
-                f" You also hold {surplus_ids}, which qualifies for the same requirement "
-                "but isn't counted since it's already satisfied -- consult an FTCC advisor "
-                "about which option best fits your plans if you intend to transfer to a "
-                "4-year program."
-            )
-        return explanation

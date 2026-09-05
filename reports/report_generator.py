@@ -2,20 +2,46 @@
 
 from __future__ import annotations
 
+import textwrap
 from datetime import datetime
 from pathlib import Path
 from typing import Sequence
 
-from models import CreditProfileEntry, ProgramRecommendation
+from models import CreditProfileEntry, MatchedCourse, ProgramRecommendation
 
 # Verbatim "Required Notice" from the assignment spec.
 REQUIRED_NOTICE = (
-    "IMPORTANT: This application provides an unofficial estimate using instructional "
+    "This application provides an unofficial estimate using instructional "
     "source files and student-developed conversion logic. A listed equivalency does not "
     "guarantee that credit will be awarded or apply to a specific FTCC program. Official "
     "decisions require institutional review of military documentation, current program "
     "requirements, admissions rules, credentials, substitutions, and residency requirements."
 )
+
+_WIDTH = 80
+_DIVIDER = "=" * _WIDTH
+_RULE = "-" * _WIDTH
+
+
+def _wrap(text: str, indent: str = "") -> list[str]:
+    return textwrap.wrap(
+        text, width=_WIDTH - len(indent), initial_indent=indent, subsequent_indent=indent
+    ) or [indent.rstrip()]
+
+
+def surplus_note(surplus_courses: Sequence[MatchedCourse]) -> str:
+    """Advisory text for courses that qualify for a requirement but weren't counted
+    because the requirement's target is already met by a higher-value course. Kept as a
+    shared helper so console display and the exported report say the same thing, built
+    directly from the structured surplus_courses list rather than a string to re-parse."""
+    if not surplus_courses:
+        return ""
+    surplus_ids = ", ".join(match.course_id for match in surplus_courses)
+    return (
+        f"Also holds: {surplus_ids} -- qualifies for the same requirement but isn't "
+        "counted since it's already satisfied. Consult an FTCC advisor about which "
+        "option best fits your plans if you intend to transfer to a 4-year program."
+    )
 
 
 class ReportGenerator:
@@ -30,58 +56,76 @@ class ReportGenerator:
         recommendations: Sequence[ProgramRecommendation],
     ) -> str:
         lines: list[str] = [
+            _DIVIDER,
             "FTCC MILITARY CREDIT AND PROGRAM RECOMMENDATION REPORT",
-            f"Generated: {datetime.now().isoformat(timespec='seconds')}",
+            _DIVIDER,
+            f"Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}",
             "",
-            f"MOS: {mos_code}   Skill level: {skill_level}",
-            "Completed trainings: "
+            "YOUR SELECTIONS",
+            _RULE,
+            f"MOS:                  {mos_code}",
+            f"Skill Level:          {skill_level}",
+            "Completed Trainings:  "
             + (", ".join(training_names) if training_names else "(none selected)"),
             "",
             "POTENTIAL CREDIT SUMMARY",
+            _RULE,
         ]
 
         if not profile:
             lines.append(
-                "  No potential credit found for the selected MOS/skill level and trainings."
+                "No potential credit found for the selected MOS/skill level and trainings."
             )
         else:
+            lines.append(f"{'Course':<10} {'Credits':<8} Source")
             for entry in profile:
-                lines.append(f"  {entry.course_id}: {entry.credits} credit(s) <- {entry.sources}")
-            lines.append(f"  Total potential credits: {sum(e.credits for e in profile)}")
+                lines.append(f"{entry.course_id:<10} {entry.credits:<8} {entry.sources}")
+            lines.append(_RULE)
+            lines.append(f"Total Potential Credits: {sum(entry.credits for entry in profile)}")
 
         lines.append("")
         lines.append("TOP PROGRAM RECOMMENDATIONS")
+        lines.append(_RULE)
 
         if not recommendations:
-            lines.append("  No FTCC programs had an exact course-code match.")
+            lines.append("No FTCC programs had an exact course-code match.")
         else:
             for rank, rec in enumerate(recommendations, start=1):
                 lines.append("")
                 lines.append(
-                    f"  #{rank}: {rec.program_code} - {rec.program_title} ({rec.credential_type})"
+                    f"#{rank}  {rec.program_code} - {rec.program_title} ({rec.credential_type})"
                 )
+                lines.append("")
+                lines.append("    Matched Courses:")
                 for match in rec.matched_courses:
                     lines.append(
-                        f"      {match.course_id}: {match.credits} credit(s) -- "
-                        f"{match.requirement_type} (weight {match.weight}, {match.ranking_points} pts)"
+                        f"      {match.course_id:<8} {match.credits:>2} cr   "
+                        f"{match.requirement_type:<26} (weight {match.weight}, "
+                        f"{match.ranking_points} pts)"
                     )
-                lines.append(
-                    f"      Total potentially applicable matched credits: {rec.applicable_matched_credits}"
-                )
-                lines.append(f"      Recommendation score: {rec.recommendation_score}")
+                lines.append("")
+                lines.append(f"    Matched Credits:       {rec.applicable_matched_credits}")
+                lines.append(f"    Recommendation Score:  {rec.recommendation_score}")
                 if rec.match_percentage is not None:
                     lines.append(
-                        f"      Estimated match: {rec.match_percentage:.1f}% of "
+                        f"    Estimated Match:       {rec.match_percentage:.1f}% of "
                         f"{rec.program_total_credits} total credits"
                     )
                 if rec.estimated_credits_remaining is not None:
-                    lines.append(
-                        f"      Estimated credits remaining: {rec.estimated_credits_remaining}"
-                    )
-                lines.append(f"      {rec.explanation}")
+                    lines.append(f"    Credits Remaining:     {rec.estimated_credits_remaining}")
+                lines.append("")
+                lines.extend(_wrap(rec.explanation, indent="    "))
+                note = surplus_note(rec.surplus_courses)
+                if note:
+                    lines.append("")
+                    lines.extend(_wrap(note, indent="    "))
 
         lines.append("")
-        lines.append(REQUIRED_NOTICE)
+        lines.append(_DIVIDER)
+        lines.append("IMPORTANT NOTICE")
+        lines.append(_DIVIDER)
+        lines.extend(_wrap(REQUIRED_NOTICE))
+
         return "\n".join(lines)
 
     def export(self, report_text: str, path: Path) -> None:

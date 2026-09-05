@@ -26,7 +26,7 @@ from repositories.normalized_data_repository import (
     write_csv,
     write_manifest,
 )
-from reports.report_generator import ReportGenerator
+from reports.report_generator import ReportGenerator, surplus_note
 from services.conversion_validator import ConversionValidator
 from services.credit_evaluator import CreditEvaluator
 from services.recommendation_engine import RecommendationEngine
@@ -317,6 +317,9 @@ def _print_recommendations(recommendations: list[ProgramRecommendation]) -> None
         if rec.estimated_credits_remaining is not None:
             print(f"  Estimated credits remaining: {rec.estimated_credits_remaining}")
         print(f"  {rec.explanation}")
+        note = surplus_note(rec.surplus_courses)
+        if note:
+            print(f"  {note}")
     print()
     print(
         "These are estimates only, based on exact course-code matches to documented "

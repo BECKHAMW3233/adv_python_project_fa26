@@ -80,9 +80,11 @@ class ReportGenerator:
                 "No potential credit found for the selected MOS/skill level and trainings."
             )
         else:
-            lines.append(f"{'Course':<10} {'Credits':<8} Source")
+            lines.append(f"{'Course':<10} {'Title':<32} {'Credits':<8} Source")
             for entry in profile:
-                lines.append(f"{entry.course_id:<10} {entry.credits:<8} {entry.sources}")
+                lines.append(
+                    f"{entry.course_id:<10} {entry.course_title:<32} {entry.credits:<8} {entry.sources}"
+                )
             lines.append(_RULE)
             lines.append(f"Total Potential Credits: {sum(entry.credits for entry in profile)}")
 
@@ -102,7 +104,7 @@ class ReportGenerator:
                 lines.append("    Matched Courses:")
                 for match in rec.matched_courses:
                     lines.append(
-                        f"      {match.course_id:<8} {match.credits:>2} cr   "
+                        f"      {match.course_id:<8} {match.course_title:<32} {match.credits:>2} cr   "
                         f"{match.requirement_type:<26} (weight {match.weight}, "
                         f"{match.ranking_points} pts)"
                     )

@@ -19,6 +19,7 @@ from repositories.normalized_data_repository import (
     write_manifest,
 )
 from services.conversion_validator import ConversionValidator
+from services.course_credit_resolver import build_reference, resolve_training_credits
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ SOURCE_FILES = (MOS_SOURCE, TRAINING_SOURCE, PROGRAM_SOURCE)
 MOS_CSV = NORMALIZED_DATA_DIR / "mos_equivalencies.csv"
 TRAINING_CSV = NORMALIZED_DATA_DIR / "training_equivalencies.csv"
 PROGRAM_CSV = NORMALIZED_DATA_DIR / "program_requirements.csv"
+COURSE_CREDIT_REFERENCE_CSV = NORMALIZED_DATA_DIR / "course_credits_reference.csv"
 NORMALIZED_FILES = (MOS_CSV, TRAINING_CSV, PROGRAM_CSV)
 
 MANIFEST_PATH = NORMALIZED_DATA_DIR / ".conversion_manifest.json"
@@ -68,7 +70,6 @@ def convert() -> tuple[list, list, list, list, list, list]:
 
     training_importer = TrainingDocxImporter()
     training_records, training_issues = training_importer.import_document(TRAINING_SOURCE)
-    write_csv(training_records, TRAINING_CSV)
     write_csv(training_issues, CONVERSION_ISSUES_DIR / "training_table_issues.csv")
     logger.info(
         "Training conversion: %d records, %d table issues",
@@ -89,6 +90,28 @@ def convert() -> tuple[list, list, list, list, list, list]:
     )
     for issue in program_issues:
         logger.warning("Program workbook issue [row %d]: %s", issue.source_row, issue.message)
+
+    # Resolve training rows that named a course without their own per-course credit value
+    # (a combined-hours block covering multiple courses) against a reference built from the
+    # FTCC program catalog and any other training row that already resolved that same course
+    # on its own -- never from arithmetic (e.g. splitting hours evenly), since that would
+    # invent a value the source never actually states. A course found nowhere else stays
+    # unresolved, exactly as the importer produced it.
+    course_credit_reference = build_reference(program_records, training_records)
+    write_csv(list(course_credit_reference.values()), COURSE_CREDIT_REFERENCE_CSV)
+    unresolved_before = sum(1 for r in training_records if r.status == "credits_unresolved")
+    training_records = resolve_training_credits(training_records, course_credit_reference)
+    unresolved_after = sum(1 for r in training_records if r.status == "credits_unresolved")
+    write_csv(training_records, TRAINING_CSV)
+    logger.info(
+        "Course-credit reference: %d known course(s); resolved %d of %d previously-ambiguous "
+        "training row(s) (%d remain unresolved -- no credit value found anywhere in the "
+        "supplied source files)",
+        len(course_credit_reference),
+        unresolved_before - unresolved_after,
+        unresolved_before,
+        unresolved_after,
+    )
 
     write_manifest(MANIFEST_PATH, {path.name: compute_file_hash(path) for path in SOURCE_FILES})
     logger.info("Conversion manifest written")
@@ -146,9 +169,15 @@ def print_summary(
         print(f"  - {issue.source_sheet}: {issue.message}")
     print()
     training_rows_converted = len({(r.branch, r.training_name) for r in training_records})
+    resolved_via_reference = sum(
+        1 for r in training_records if "course-credit reference" in r.notes
+    )
+    still_unresolved = sum(1 for r in training_records if r.status == "credits_unresolved")
     print(f"Training rows converted:           {training_rows_converted}")
     print(f"Training tables requiring review:  {len(training_issues)}")
     print(f"Training records written:          {len(training_records)}")
+    print(f"Training credits resolved via reference: {resolved_via_reference}")
+    print(f"Training credits still unresolved:       {still_unresolved}")
     for issue in training_issues:
         print(f"  - {issue.source_table}: {issue.message}")
     print()

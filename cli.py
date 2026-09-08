@@ -184,7 +184,8 @@ def print_credit_profile(profile: list[CreditProfileEntry]) -> None:
         print("No potential credit found for the selected MOS/skill level and trainings.")
     else:
         for entry in profile:
-            print(f"  {entry.course_id}: {entry.credits} credit(s)  <- {entry.sources}")
+            title = f" ({entry.course_title})" if entry.course_title else ""
+            print(f"  {entry.course_id}{title}: {entry.credits} credit(s)  <- {entry.sources}")
         print(f"Total potential credits: {sum(entry.credits for entry in profile)}")
     print()
     print(
@@ -207,8 +208,9 @@ def print_recommendations(recommendations: list[ProgramRecommendation]) -> None:
         print(f"#{rank}: {rec.program_code} - {rec.program_title} ({rec.credential_type})")
         print("  Matched courses:")
         for match in rec.matched_courses:
+            title = f" ({match.course_title})" if match.course_title else ""
             print(
-                f"    {match.course_id}: {match.credits} credit(s) -- {match.requirement_type} "
+                f"    {match.course_id}{title}: {match.credits} credit(s) -- {match.requirement_type} "
                 f"(weight {match.weight}, {match.ranking_points} pts)"
             )
         print(f"  Total potentially applicable matched credits: {rec.applicable_matched_credits}")

@@ -1,5 +1,37 @@
 # Changelog
 
+## [34] 2026-09-08 — Add course_title to the course-credit reference CSV
+
+**Why:** per William's direction -- normalized_data/course_credits_reference.csv only
+listed course_id, credits, and source, so a reader had to cross-reference another file to
+know what a course code actually was. Adding the name next to the code makes the file
+usable as a standalone lookup table, even though the title is redundant with data already
+in program_requirements.csv.
+
+- Added course_title to the CourseCreditReference dataclass (models.py), placed right
+  after course_id to match the column ordering already used elsewhere (e.g.
+  MOSCourseEquivalency).
+- services/course_credit_resolver.py's build_reference() now populates it: a
+  program_catalog-sourced entry uses that program's own course_title directly; a
+  training-sourced entry (TrainingEquivalency has no title field of its own) falls back to
+  the catalog's title for the same course_id when any FTCC program names it, and is left
+  blank -- never guessed -- when no source names the course anywhere. This mirrors the
+  same catalog-title fallback pattern already used in credit_evaluator.py (entry 29).
+- Purely a human-readable convenience column; not used in any matching or resolution
+  logic, and doesn't change which courses resolve or what credit value they get.
+
+Verified: full test suite still passes (72 tests, no changes needed -- the existing
+tests assert on .credits/.source by attribute name, unaffected by the new field). Ran a
+full --refresh reconversion against the real source data (same result as before: 0
+warnings, 0 errors) and inspected the regenerated CSV directly: program-catalog rows show
+real titles (e.g. ENG110 -- Freshman Composition), and 25 of 561 rows are honestly blank
+because no supplied source names that course anywhere.
+
+**Files changed:** models.py, services/course_credit_resolver.py,
+normalized_data/course_credits_reference.csv
+
+---
+
 ## [33] 2026-09-08 — Full verification pass against real data; confirm pick-group capping and unmatched-course display behavior
 
 **Why:** per William's direction -- a full check that the current pipeline (including

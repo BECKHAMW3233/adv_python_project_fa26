@@ -59,6 +59,7 @@ class CourseCreditReference:
     rows that named a course without their own per-course credit value."""
 
     course_id: str
+    course_title: str
     credits: int
     source: str
 

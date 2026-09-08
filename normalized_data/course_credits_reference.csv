@@ -1,562 +1,562 @@
-course_id,credits,source
-ENG110,3,program_catalog
-ENG111,3,program_catalog
-COM110,3,program_catalog
-COM120,3,program_catalog
-COM231,3,program_catalog
-ENG112,3,program_catalog
-ENG114,3,program_catalog
-ART111,3,program_catalog
-HUM110,3,program_catalog
-HUM115,3,program_catalog
-HUM230,3,program_catalog
-MUS110,3,program_catalog
-PHI240,3,program_catalog
-ECO151,3,program_catalog
-ECO251,3,program_catalog
-ECO252,3,program_catalog
-POL120,3,program_catalog
-PSY118,3,program_catalog
-PSY150,3,program_catalog
-SOC210,3,program_catalog
-MAT110,3,program_catalog
-MAT121,3,program_catalog
-MAT143,3,program_catalog
-MAT152,4,program_catalog
-MAT171,4,program_catalog
-CTI110,3,program_catalog
-CTI120,3,program_catalog
-CTS115,3,program_catalog
-CIS110,3,program_catalog
-CIS115,3,program_catalog
-NOS110,3,program_catalog
-WEB110,3,program_catalog
-CSC151,3,program_catalog
-CSC251,3,program_catalog
-DBA110,3,program_catalog
-DBA120,3,program_catalog
-DME110,3,program_catalog
-DME115,3,program_catalog
-DME120,3,program_catalog
-DME130,3,program_catalog
-CSC134,3,program_catalog
-CSC153,3,program_catalog
-SGD113,3,program_catalog
-SGD111,3,program_catalog
-SGD112,3,program_catalog
-CTI150,3,program_catalog
-WEB125,3,program_catalog
-WEB141,3,program_catalog
-WEB151,3,program_catalog
-WEB251,3,program_catalog
-NET125,3,program_catalog
-NET126,3,program_catalog
-CTI141,3,program_catalog
-CTS155,3,program_catalog
-CTS272,3,program_catalog
-SEC110,3,program_catalog
-BAS120,3,program_catalog
-CSC121,3,program_catalog
-CCT112,3,program_catalog
-CCT121,4,program_catalog
-CCT231,3,program_catalog
-CCT240,3,program_catalog
-CCT241,3,program_catalog
-CCT250,3,program_catalog
-CCT251,3,program_catalog
-CCT260,3,program_catalog
-CCT272,3,program_catalog
-CCT273,3,program_catalog
-CET111,3,program_catalog
-CIS111,2,program_catalog
-CSC118,3,program_catalog
-CSC124,3,program_catalog
-CSC218,3,program_catalog
-CSC221,3,program_catalog
-CSC234,3,program_catalog
-CSC253,3,program_catalog
-CSC289,3,program_catalog
-CTI115,3,program_catalog
-CTI130,6,program_catalog
-CTI135,3,program_catalog
-CTI140,3,program_catalog
-CTI175,3,program_catalog
-CTI240,3,program_catalog
-CTI241,3,program_catalog
-CTI260,3,program_catalog
-CTI270,3,program_catalog
-CTI289,3,program_catalog
-CTS120,3,program_catalog
-CTS130,3,program_catalog
-CTS135,4,program_catalog
-CTS137,3,program_catalog
-CTS220,3,program_catalog
-CTS225,3,program_catalog
-CTS230,3,program_catalog
-CTS237,3,program_catalog
-CTS240,3,program_catalog
-CTS250,3,program_catalog
-CTS255,3,program_catalog
-CTS285,3,program_catalog
-CTS289,3,program_catalog
-DBA112,3,program_catalog
-DBA115,3,program_catalog
-DBA125,3,program_catalog
-DBA130,3,program_catalog
-DBA210,3,program_catalog
-DBA220,3,program_catalog
-DBA221,3,program_catalog
-DBA223,3,program_catalog
-DBA230,3,program_catalog
-DBA240,3,program_catalog
-DBA260,3,program_catalog
-DBA261,3,program_catalog
-DBA270,3,program_catalog
-DBA271,3,program_catalog
-DBA273,3,program_catalog
-DBA285,3,program_catalog
-DBA289,3,program_catalog
-DEA111,3,program_catalog
-DEA112,3,program_catalog
-DME111,3,program_catalog
-DME125,3,program_catalog
-DME140,3,program_catalog
-DME210,3,program_catalog
-DME211,3,program_catalog
-DME215,3,program_catalog
-DME216,3,program_catalog
-DME220,3,program_catalog
-DME230,3,program_catalog
-DME240,3,program_catalog
-DME260,3,program_catalog
-DME270,3,program_catalog
-DME285,3,program_catalog
-GIS111,3,program_catalog
-GRD110,3,program_catalog
-GRD121,2,program_catalog
-GRD131,3,program_catalog
-GRD132,3,program_catalog
-GRD141,4,program_catalog
-GRD142,4,program_catalog
-GRD151,3,program_catalog
-GRD152,3,program_catalog
-GRD153,3,program_catalog
-GRD154,3,program_catalog
-GRD159,3,program_catalog
-GRD167,3,program_catalog
-GRD168,3,program_catalog
-MIT115,3,program_catalog
-MIT120,3,program_catalog
-NET110,3,program_catalog
-NET135,3,program_catalog
-NET225,3,program_catalog
-NET226,3,program_catalog
-NET270,4,program_catalog
-NET272,3,program_catalog
-NET289,3,program_catalog
-NOS120,3,program_catalog
-NOS125,3,program_catalog
-NOS130,3,program_catalog
-NOS160,3,program_catalog
-NOS220,3,program_catalog
-NOS230,3,program_catalog
-NOS231,3,program_catalog
-NOS232,3,program_catalog
-NOS250,3,program_catalog
-OST137,3,program_catalog
-OST171,3,program_catalog
-SEC150,3,program_catalog
-SEC151,3,program_catalog
-SEC160,3,program_catalog
-SEC175,3,program_catalog
-SEC210,3,program_catalog
-SEC251,3,program_catalog
-SEC258,3,program_catalog
-SEC285,3,program_catalog
-SGD114,3,program_catalog
-SGD115,3,program_catalog
-SGD116,3,program_catalog
-SGD117,3,program_catalog
-SGD125,3,program_catalog
-SGD135,3,program_catalog
-SGD158,3,program_catalog
-SGD161,3,program_catalog
-SGD162,3,program_catalog
-SGD163,3,program_catalog
-SGD165,3,program_catalog
-SGD166,3,program_catalog
-SGD168,3,program_catalog
-SGD172,3,program_catalog
-SGD174,3,program_catalog
-SGD212,3,program_catalog
-SGD213,3,program_catalog
-SGD214,3,program_catalog
-SGD237,3,program_catalog
-SGD262,3,program_catalog
-SGD268,3,program_catalog
-SGD274,3,program_catalog
-SGD285,3,program_catalog
-SGD288,2,program_catalog
-SGD289,3,program_catalog
-WEB115,3,program_catalog
-WEB140,3,program_catalog
-WEB210,3,program_catalog
-WEB213,3,program_catalog
-WEB214,3,program_catalog
-WEB215,3,program_catalog
-WEB225,3,program_catalog
-WEB287,2,program_catalog
-BAS121,3,program_catalog
-BAS150,3,program_catalog
-BAS220,3,program_catalog
-CSC112,3,program_catalog
-CSC113,3,program_catalog
-CSC114,3,program_catalog
-CSC115,3,program_catalog
-CSC123,3,program_catalog
-CSC155,3,program_catalog
-CSC161,3,program_catalog
-CSC162,3,program_catalog
-CSC214,3,program_catalog
-CSC215,3,program_catalog
-CSC249,3,program_catalog
-CTS210,3,program_catalog
-DBA118,3,program_catalog
-DBA218,3,program_catalog
-DEA212,3,program_catalog
-DEA213,3,program_catalog
-MKT232,3,program_catalog
-NOS221,3,program_catalog
-WBL110,1,program_catalog
-WBL111,1,program_catalog
-WBL112,2,program_catalog
-WBL113,3,program_catalog
-WBL121,1,program_catalog
-WBL122,2,program_catalog
-WBL123,3,program_catalog
-WBL131,1,program_catalog
-WBL132,2,program_catalog
-ACA110,2,program_catalog
-ACA120,1,program_catalog
-ACA122,1,program_catalog
-COM140,3,program_catalog
-HUM120,3,program_catalog
-REL110,3,program_catalog
-GEO111,3,program_catalog
-SOC220,3,program_catalog
-ACC120,4,program_catalog
-BUS115,3,program_catalog
-LOG110,3,program_catalog
-LOG125,3,program_catalog
-LOG215,3,program_catalog
-LOG235,3,program_catalog
-LOG240,3,program_catalog
-LOG250,4,program_catalog
-LOG120,3,program_catalog
-LOG210,3,program_catalog
-LOG211,3,program_catalog
-LOG220,3,program_catalog
-LOG230,3,program_catalog
-BUS153,3,program_catalog
-TOM130,3,program_catalog
-TOM250,3,program_catalog
-TOM120,3,program_catalog
-BUS110,3,program_catalog
-INT110,3,program_catalog
-MKT223,3,program_catalog
-OMT156,3,program_catalog
-BUS240,3,program_catalog
-BUS260,3,program_catalog
-ISC121,3,program_catalog
-LOG245,3,program_catalog
-MKT221,3,program_catalog
-OMT110,3,program_catalog
-ACC121,4,program_catalog
-ACC149,2,program_catalog
-BUS225,3,program_catalog
-ACC130,3,program_catalog
-ACC140,2,program_catalog
-ACC220,4,program_catalog
-BAF143,3,program_catalog
-BUS125,3,program_catalog
-BUS147,3,program_catalog
-ACC129,3,program_catalog
-ACC132,2,program_catalog
-ACC150,2,program_catalog
-ACC151,2,program_catalog
-ACC180,3,program_catalog
-ACC221,4,program_catalog
-ACC225,3,program_catalog
-ACC226,3,program_catalog
-ACC240,3,program_catalog
-ACC269,3,program_catalog
-BAF110,3,program_catalog
-BUS116,3,program_catalog
-BUS135,3,program_catalog
-BUS137,3,program_catalog
-BUS148,3,program_catalog
-BUS228,3,program_catalog
-BUS230,3,program_catalog
-BUS255,3,program_catalog
-BUS258,3,program_catalog
-ETR240,3,program_catalog
-MKT120,3,program_catalog
-MKT123,3,program_catalog
-OST286,3,program_catalog
-ART114,3,program_catalog
-HUM160,3,program_catalog
-HIS111,3,program_catalog
-HIS121,3,program_catalog
-GRD280,4,program_catalog
-GRD155,3,program_catalog
-GRD241,4,program_catalog
-GRD180,3,program_catalog
-GRD188,3,program_catalog
-GRD242,4,program_catalog
-GRD265,3,program_catalog
-GRD282,2,program_catalog
-ART131,3,program_catalog
-ART132,3,program_catalog
-ART288,3,program_catalog
-GRD133,3,program_catalog
-GRD263,3,program_catalog
-MKT122,3,program_catalog
-MKT220,3,program_catalog
-PHY121,4,program_catalog
-ART115,3,program_catalog
-ART116,3,program_catalog
-ART117,3,program_catalog
-ART121,3,program_catalog
-ART240,3,program_catalog
-ART241,3,program_catalog
-ART244,3,program_catalog
-ART171,3,program_catalog
-ART281,3,program_catalog
-ART283,3,program_catalog
-DAN110,3,program_catalog
-DRA111,3,program_catalog
-DRA112,3,program_catalog
-DRA115,3,program_catalog
-DRA122,3,program_catalog
-DRA126,3,program_catalog
-DRA211,3,program_catalog
-DRA212,3,program_catalog
-HUM121,3,program_catalog
-HUM122,3,program_catalog
-HUM130,3,program_catalog
-HUM150,3,program_catalog
-HUM170,3,program_catalog
-HUM211,3,program_catalog
-HUM212,3,program_catalog
-HUM220,3,program_catalog
-MUS112,3,program_catalog
-MUS113,3,program_catalog
-MUS114,3,program_catalog
-MUS213,3,program_catalog
-PHI210,3,program_catalog
-PHI215,3,program_catalog
-PHI220,3,program_catalog
-PHI221,3,program_catalog
-PHI230,3,program_catalog
-REL111,3,program_catalog
-REL112,3,program_catalog
-REL211,3,program_catalog
-REL212,3,program_catalog
-REL221,3,program_catalog
-ANT210,3,program_catalog
-ANT220,3,program_catalog
-ANT221,3,program_catalog
-ANT230,3,program_catalog
-ANT240,3,program_catalog
-GEO110,3,program_catalog
-GEO112,3,program_catalog
-GEO113,3,program_catalog
-GEO121,3,program_catalog
-GEO130,3,program_catalog
-GEO131,4,program_catalog
-GEO132,4,program_catalog
-HIS112,3,program_catalog
-HIS115,3,program_catalog
-HIS116,3,program_catalog
-HIS122,3,program_catalog
-HIS131,3,program_catalog
-HIS132,3,program_catalog
-HIS162,3,program_catalog
-HIS212,3,program_catalog
-HIS221,3,program_catalog
-HIS222,3,program_catalog
-HIS223,3,program_catalog
-HIS226,3,program_catalog
-HIS236,3,program_catalog
-POL130,3,program_catalog
-POL210,3,program_catalog
-POL220,3,program_catalog
-PSY110,3,program_catalog
-PSY141,3,program_catalog
-PSY211,3,program_catalog
-PSY237,3,program_catalog
-PSY239,3,program_catalog
-AHR110,5,program_catalog
-AHR111,3,program_catalog
-AHR112,4,program_catalog
-AHR113,4,program_catalog
-AHR114,4,program_catalog
-AHR130,3,program_catalog
-AHR211,3,program_catalog
-AHR212,4,program_catalog
-AHR213,2,program_catalog
-AHR115,4,program_catalog
-AHR133,4,program_catalog
-AHR160,1,program_catalog
-AHR180,1,program_catalog
-AHR151,2,program_catalog
-AHR215,2,program_catalog
-AHR245,2,program_catalog
-AHR255,2,program_catalog
-BAT111,2,program_catalog
-AHR250,2,program_catalog
-POL110,3,program_catalog
-PSY241,3,program_catalog
-PSY243,3,program_catalog
-PSY246,3,program_catalog
-PSY249,3,program_catalog
-PSY255,3,program_catalog
-PSY259,3,program_catalog
-PSY263,3,program_catalog
-PSY265,3,program_catalog
-PSY271,3,program_catalog
-PSY275,3,program_catalog
-PSY281,3,program_catalog
-SOC213,3,program_catalog
-SOC225,3,program_catalog
-SOC230,3,program_catalog
-SOC232,3,program_catalog
-SOC240,3,program_catalog
-SOC244,3,program_catalog
-SOC250,3,program_catalog
-ELC112,5,program_catalog
-ELC113,4,program_catalog
-ELC117,4,program_catalog
-ELC128,3,program_catalog
-ELC114,4,program_catalog
-ELC121,2,program_catalog
-ELC122,4,program_catalog
-ELC220,3,program_catalog
-BPR130,3,program_catalog
-ELC118,2,program_catalog
-ELC119,2,program_catalog
-ELC234,3,program_catalog
-ISC115,2,program_catalog
-AHR120,2,program_catalog
-CST241,3,program_catalog
-ELC215,3,program_catalog
-PLU115,4,program_catalog
-SST140,3,program_catalog
-WLD112,2,program_catalog
-BIO168,4,program_catalog
-EMS110,9,program_catalog
-BIO163,5,program_catalog
-BIO169,4,program_catalog
-EMS122,1,program_catalog
-EMS130,4,program_catalog
-EMS131,2,program_catalog
-EMS160,3,program_catalog
-EMS220,3,program_catalog
-EMS221,2,program_catalog
-EMS231,3,program_catalog
-EMS240,2,program_catalog
-EMS241,4,program_catalog
-EMS250,4,program_catalog
-EMS260,2,program_catalog
-EMS270,4,program_catalog
-EMS285,2,program_catalog
-EMS210,2,program_catalog
-EMS115,2,program_catalog
-EMS125,3,program_catalog
-EMS140,2,program_catalog
-EMS235,2,program_catalog
-MED120,2,program_catalog
-OST141,3,program_catalog
-OST142,3,program_catalog
-ART260,3,program_catalog
-DRA120,3,program_catalog
-DRA130,3,program_catalog
-MUS121,3,program_catalog
-BPR115,2,program_catalog
-HYD110,3,program_catalog
-ISC112,2,program_catalog
-MAC141,4,program_catalog
-MEC130,3,program_catalog
-WLD131,4,program_catalog
-ELC228,4,program_catalog
-ATR112,3,program_catalog
-ATR212,3,program_catalog
-ENG101,3,program_catalog
-WLD110,2,program_catalog
-WLD115,5,program_catalog
-WLD121,4,program_catalog
-WLD141,3,program_catalog
-CIS113,1,program_catalog
-WLD116,4,program_catalog
-WLD132,3,program_catalog
-WLD151,4,program_catalog
-WLD261,2,program_catalog
-CJC111,3,program_catalog
-CJC112,3,program_catalog
-CJC113,3,program_catalog
-CJC131,3,program_catalog
-CJC212,3,program_catalog
-CJC221,4,program_catalog
-CJC231,3,program_catalog
-CJC132,3,program_catalog
-CJC141,3,program_catalog
-BIO111,4,program_catalog
-BIO112,4,program_catalog
-CJC115,3,program_catalog
-CJC120,2,program_catalog
-CJC121,3,program_catalog
-CJC122,3,program_catalog
-CJC151,3,program_catalog
-CJC160,3,program_catalog
-CJC161,3,program_catalog
-CJC162,3,program_catalog
-CJC163,3,program_catalog
-CJC170,3,program_catalog
-CJC211,3,program_catalog
-CJC213,3,program_catalog
-CJC214,3,program_catalog
-CJC215,3,program_catalog
-CJC222,3,program_catalog
-CJC223,3,program_catalog
-CJC225,3,program_catalog
-CJC232,3,program_catalog
-CJC233,3,program_catalog
-CJC240,3,program_catalog
-CJC241,3,program_catalog
-CJC244,3,program_catalog
-CJC255,3,program_catalog
-CJC260,2,program_catalog
-CJC262,2,program_catalog
-EPT120,3,program_catalog
-EPT130,3,program_catalog
-EPT210,3,program_catalog
-EPT220,3,program_catalog
-PAD151,3,program_catalog
-PAD152,3,program_catalog
-PAD251,3,program_catalog
-PAD252,3,program_catalog
-PAD254,3,program_catalog
-PED110,2,program_catalog
-SPA111,3,program_catalog
-WBL133,3,program_catalog
-WBL211,1,program_catalog
-BUS274,3,training:Demonstrated Logistician-SOLE
-BUS253,3,training:Distributed Leader III (DLC III)
-ITL245,3,training:Geoint Professional Fundamentals
-FIP230,5,training:Hazmat Familiarization/Safety
-ART264,3,training:Intermediate Photojournalism
-HEA110,3,training:Master Fitness
-PMT110,3,training:Project Management
-BUS234,3,training:SHARP certification
-BUS285,3,training:Warrant Officer Senior Staff Course
-LDR110,3,training:Sergeant’s School Seminar Program
+course_id,course_title,credits,source
+ENG110,Freshman Composition,3,program_catalog
+ENG111,Writing and Inquiry,3,program_catalog
+COM110,Introduction to Communication,3,program_catalog
+COM120,Intro Interpersonal Com,3,program_catalog
+COM231,Public Speaking,3,program_catalog
+ENG112,Writing/Research in the Disc,3,program_catalog
+ENG114,Prof Research & Reporting,3,program_catalog
+ART111,Art Appreciation,3,program_catalog
+HUM110,Technology and Society,3,program_catalog
+HUM115,Critical Thinking,3,program_catalog
+HUM230,Leadership Development,3,program_catalog
+MUS110,Music Appreciation,3,program_catalog
+PHI240,Introduction to Ethics,3,program_catalog
+ECO151,Survey of Economics,3,program_catalog
+ECO251,Prin of Microeconomics,3,program_catalog
+ECO252,Prin of Macroeconomics,3,program_catalog
+POL120,American Government,3,program_catalog
+PSY118,Interpersonal Psychology,3,program_catalog
+PSY150,General Psychology,3,program_catalog
+SOC210,Introduction to Sociology,3,program_catalog
+MAT110,Math Measurement & Literacy,3,program_catalog
+MAT121,Algebra/Trigonometry I,3,program_catalog
+MAT143,Quantitative Literacy,3,program_catalog
+MAT152,Statistical Methods I,4,program_catalog
+MAT171,Precalculus Algebra,4,program_catalog
+CTI110,IT Foundations,3,program_catalog
+CTI120,Network & Sec Foundations,3,program_catalog
+CTS115,Info Sys Business Concepts,3,program_catalog
+CIS110,Introduction to Computers,3,program_catalog
+CIS115,Intro to Prog & Logic,3,program_catalog
+NOS110,Operating Systems Concepts,3,program_catalog
+WEB110,Web Development Fundamentals,3,program_catalog
+CSC151,JAVA Programming,3,program_catalog
+CSC251,Advanced JAVA Programming,3,program_catalog
+DBA110,Database,3,program_catalog
+DBA120,Database,3,program_catalog
+DME110,Intro to Digital Media,3,program_catalog
+DME115,Digital Media Tools,3,program_catalog
+DME120,Intro to Multimedia,3,program_catalog
+DME130,Digital Animation I,3,program_catalog
+CSC134,C++ Programming,3,program_catalog
+CSC153,C# Programming,3,program_catalog
+SGD113,SGD Programming I,3,program_catalog
+SGD111,Introduction to SGD,3,program_catalog
+SGD112,SGD Design I,3,program_catalog
+CTI150,Mobile Computing Devices,3,program_catalog
+WEB125,Responsive Web Frameworks,3,program_catalog
+WEB141,Mobile Interface Design,3,program_catalog
+WEB151,Mobile Application Dev I,3,program_catalog
+WEB251,Mobile Application Dev II,3,program_catalog
+NET125,Introduction to Networks,3,program_catalog
+NET126,,3,program_catalog
+CTI141,,3,program_catalog
+CTS155,Tech Support Functions,3,program_catalog
+CTS272,Desktop Support: Apps,3,program_catalog
+SEC110,Security Concepts,3,program_catalog
+BAS120,Intro to Analytics,3,program_catalog
+CSC121,Python Programming,3,program_catalog
+CCT112,Ethics & High Technology,3,program_catalog
+CCT121,Computer Crime Invest.,4,program_catalog
+CCT231,Technology Crimes & Law,3,program_catalog
+CCT240,Data Recovery Techniques,3,program_catalog
+CCT241,Advanced Data Recovery,3,program_catalog
+CCT250,Network Vulnerabilities I,3,program_catalog
+CCT251,Network Vulnerabilities II,3,program_catalog
+CCT260,Mobile Phone Examination,3,program_catalog
+CCT272,Forensic Password Recov,3,program_catalog
+CCT273,Registry Forensics,3,program_catalog
+CET111,Computer Upgrade/Repair I,3,program_catalog
+CIS111,Basic PC Literacy,2,program_catalog
+CSC118,Swift Programming I,3,program_catalog
+CSC124,Intro to Data Science Prog.,3,program_catalog
+CSC218,Swift Programming II,3,program_catalog
+CSC221,Advanced Python Programming,3,program_catalog
+CSC234,Advanced C++ Programming,3,program_catalog
+CSC253,Advanced C# Programming,3,program_catalog
+CSC289,Programming Capstone Project,3,program_catalog
+CTI115,Computer Systems Foundation,3,program_catalog
+CTI130,Os and Device Foundation,6,program_catalog
+CTI135,Introduction to Green IT,3,program_catalog
+CTI140,Virtualization Concepts,3,program_catalog
+CTI175,Intro to Wireless Technology,3,program_catalog
+CTI240,Virtualization Admin I,3,program_catalog
+CTI241,Virtualization Admin II,3,program_catalog
+CTI260,Data Center Troubleshooting,3,program_catalog
+CTI270,Data Center Design & Prob Res,3,program_catalog
+CTI289,CTI Capstone Project,3,program_catalog
+CTS120,Hardware/Software Support,3,program_catalog
+CTS130,Spreadsheet,3,program_catalog
+CTS135,Integrated Software Intro,4,program_catalog
+CTS137,Google Project Management I,3,program_catalog
+CTS220,Adv Hard/Software Support,3,program_catalog
+CTS225,Spreadsheet Data Analysis,3,program_catalog
+CTS230,Advanced Spreadsheet,3,program_catalog
+CTS237,Google Project Management II,3,program_catalog
+CTS240,Project Management,3,program_catalog
+CTS250,User Support & Software Eval,3,program_catalog
+CTS255,Adv Tech Support Functions,3,program_catalog
+CTS285,Systems Analysis & Design,3,program_catalog
+CTS289,System Support Project,3,program_catalog
+DBA112,Database Utilization,3,program_catalog
+DBA115,Database Applications,3,program_catalog
+DBA125,Database Reporting,3,program_catalog
+DBA130,Intro to noSQL Databases,3,program_catalog
+DBA210,Database Administration,3,program_catalog
+DBA220,Oracle DB Programming II,3,program_catalog
+DBA221,SQL Server DB Prog II,3,program_catalog
+DBA223,MySQL DB Programming II,3,program_catalog
+DBA230,Databases in Corp Environs,3,program_catalog
+DBA240,Database Analysis/Design,3,program_catalog
+DBA260,Oracle DBMS Admin,3,program_catalog
+DBA261,SQL Server DBMS Admin,3,program_catalog
+DBA270,Oracle Performance Tuning,3,program_catalog
+DBA271,SQL Server Perf Tuning,3,program_catalog
+DBA273,MySQL Performance Tuning,3,program_catalog
+DBA285,Data Warehousing and Mining,3,program_catalog
+DBA289,Database Capstone Project,3,program_catalog
+DEA111,Introduction to AMA,3,program_catalog
+DEA112,2D Design and Animation I,3,program_catalog
+DME111,Content Strategy,3,program_catalog
+DME125,User Experience Fundamentals,3,program_catalog
+DME140,Intro to Audio/Video Media,3,program_catalog
+DME210,User Interface Design,3,program_catalog
+DME211,User Experience Res. & Test,3,program_catalog
+DME215,Adv Graphic Design Tools,3,program_catalog
+DME216,Visual Artifacts in User Exp.,3,program_catalog
+DME220,Interactive Multimedia Prog,3,program_catalog
+DME230,Digital Animation II,3,program_catalog
+DME240,Media Compression,3,program_catalog
+DME260,Emerging Tech Digital Media,3,program_catalog
+DME270,Prof Pract Digital Media,3,program_catalog
+DME285,Systems Project,3,program_catalog
+GIS111,Introduction to GIS,3,program_catalog
+GRD110,Typography I,3,program_catalog
+GRD121,Drawing Fundamentals I,2,program_catalog
+GRD131,Illustration I,3,program_catalog
+GRD132,Illustration II,3,program_catalog
+GRD141,Graphic Design I,4,program_catalog
+GRD142,Graphic Design II,4,program_catalog
+GRD151,Computer Design Basics,3,program_catalog
+GRD152,Computer Design Technology,3,program_catalog
+GRD153,Computer Design Solutions,3,program_catalog
+GRD154,Vector Imaging Software,3,program_catalog
+GRD159,Raster Imaging Applications,3,program_catalog
+GRD167,Digital Photography I,3,program_catalog
+GRD168,Digital Photography II,3,program_catalog
+MIT115,Intro to Video Concepts,3,program_catalog
+MIT120,Intro to Audio Concepts,3,program_catalog
+NET110,Networking Concepts,3,program_catalog
+NET135,Data Center Networking,3,program_catalog
+NET225,Enterprise Networking,3,program_catalog
+NET226,Network Programmability,3,program_catalog
+NET270,Building Scalable Networks,4,program_catalog
+NET272,Multi-Layer Networks,3,program_catalog
+NET289,Networking Capstone Project,3,program_catalog
+NOS120,Linux Single User,3,program_catalog
+NOS125,Linux/Unix Scripting,3,program_catalog
+NOS130,Windows Single User,3,program_catalog
+NOS160,Mobile Operating Systems,3,program_catalog
+NOS220,Linux Admin I,3,program_catalog
+NOS230,Windows Administration I,3,program_catalog
+NOS231,Windows Administration II,3,program_catalog
+NOS232,Windows Administration III,3,program_catalog
+NOS250,Enterprise Database Servers,3,program_catalog
+OST137,Office Applications I,3,program_catalog
+OST171,Intro. to Virtual Office,3,program_catalog
+SEC150,Secure Communications,3,program_catalog
+SEC151,Intro to Protocol Analysis,3,program_catalog
+SEC160,Security Administration I,3,program_catalog
+SEC175,Perimeter Defense,3,program_catalog
+SEC210,Intrusion Detection,3,program_catalog
+SEC251,Advanced Protocol Analysis,3,program_catalog
+SEC258,Security Compliance,3,program_catalog
+SEC285,Systems Security Project,3,program_catalog
+SGD114,SGD 3D Modeling I,3,program_catalog
+SGD115,Physically-Based Modeling,3,program_catalog
+SGD116,SGD Graphic Design Tools,3,program_catalog
+SGD117,Art for Games,3,program_catalog
+SGD125,SG Artificial Intellig,3,program_catalog
+SGD135,Serious Games,3,program_catalog
+SGD158,SGD Business Management,3,program_catalog
+SGD161,SGD,3,program_catalog
+SGD162,SGD,3,program_catalog
+SGD163,SGD,3,program_catalog
+SGD165,SGD,3,program_catalog
+SGD166,SGD,3,program_catalog
+SGD168,SGD,3,program_catalog
+SGD172,SGD,3,program_catalog
+SGD174,SGD,3,program_catalog
+SGD212,SGD,3,program_catalog
+SGD213,SGD,3,program_catalog
+SGD214,SGD,3,program_catalog
+SGD237,Rigging 3D Models,3,program_catalog
+SGD262,SGD 3D Animation II,3,program_catalog
+SGD268,SGD Mobile Programming II,3,program_catalog
+SGD274,SGD Level Design II,3,program_catalog
+SGD285,SGD Software Engineering,3,program_catalog
+SGD288,SGD Portfolio Design,2,program_catalog
+SGD289,SGD Capstone Project,3,program_catalog
+WEB115,Web Markup and Scripting,3,program_catalog
+WEB140,Web Development Tools,3,program_catalog
+WEB210,Web Design,3,program_catalog
+WEB213,Internet Mkt & Analytics,3,program_catalog
+WEB214,Social Media,3,program_catalog
+WEB215,Adv Markup and Scripting,3,program_catalog
+WEB225,Content Management Sys,3,program_catalog
+WEB287,Web E-Portfolio,2,program_catalog
+BAS121,Data Visualization,3,program_catalog
+BAS150,Intro to Analytical Program.,3,program_catalog
+BAS220,Appl. Analytical Program.,3,program_catalog
+CSC112,Machine Learning Computation,3,program_catalog
+CSC113,Artificial Intel. Fundamentals,3,program_catalog
+CSC114,Artificial Intelligence I,3,program_catalog
+CSC115,Machine Learning I,3,program_catalog
+CSC123,R Programming,3,program_catalog
+CSC155,Natural Language Processing,3,program_catalog
+CSC161,Deep Learning,3,program_catalog
+CSC162,Computer Vision,3,program_catalog
+CSC214,Artificial Intelligence II,3,program_catalog
+CSC215,Machine Learning II,3,program_catalog
+CSC249,Data Structure & Algorithms,3,program_catalog
+CTS210,Computer Ethics,3,program_catalog
+DBA118,Google Data Analytics I,3,program_catalog
+DBA218,Google Data Analytics II,3,program_catalog
+DEA212,2D Design & Animation II,3,program_catalog
+DEA213,3D Design and Animation I,3,program_catalog
+MKT232,Social Media Marketing,3,program_catalog
+NOS221,Linux Admin II,3,program_catalog
+WBL110,World of Work,1,program_catalog
+WBL111,Work-Based Learning I,1,program_catalog
+WBL112,Work-Based Learning I,2,program_catalog
+WBL113,Work-Based Learning I,3,program_catalog
+WBL121,Work-Based Learning II,1,program_catalog
+WBL122,Work-Based Learning II,2,program_catalog
+WBL123,Work-Based Learning II,3,program_catalog
+WBL131,Work-Based Learning III,1,program_catalog
+WBL132,Work-Based Learning III,2,program_catalog
+ACA110,Work Math/Literacy/Documents,2,program_catalog
+ACA120,Career Assessment,1,program_catalog
+ACA122,Transfer & Career Success,1,program_catalog
+COM140,Intro Intercultural Com,3,program_catalog
+HUM120,Cultural Studies,3,program_catalog
+REL110,World Religions,3,program_catalog
+GEO111,World Regional Geography,3,program_catalog
+SOC220,Social Problems,3,program_catalog
+ACC120,Prin of Financial Accounting,4,program_catalog
+BUS115,Business Law I,3,program_catalog
+LOG110,Introduction to Logistics,3,program_catalog
+LOG125,,3,program_catalog
+LOG215,,3,program_catalog
+LOG235,,3,program_catalog
+LOG240,,3,program_catalog
+LOG250,,4,program_catalog
+LOG120,Global Logistics,3,program_catalog
+LOG210,Fleet Management,3,program_catalog
+LOG211,Distribution Management,3,program_catalog
+LOG220,Logistics Management,3,program_catalog
+LOG230,Transportation Management,3,program_catalog
+BUS153,Human Resource Management,3,program_catalog
+TOM130,Fleet Maintenance,3,program_catalog
+TOM250,Operations of Trucking I,3,program_catalog
+TOM120,Introduction to Trucking,3,program_catalog
+BUS110,Introduction to Business,3,program_catalog
+INT110,International Business,3,program_catalog
+MKT223,Customer Experience,3,program_catalog
+OMT156,Problem-Solving Skills,3,program_catalog
+BUS240,Business Ethics,3,program_catalog
+BUS260,Business Communication,3,program_catalog
+ISC121,Envir Health & Safety,3,program_catalog
+LOG245,Logistics Security,3,program_catalog
+MKT221,Consumer Behavior,3,program_catalog
+OMT110,Intro to Operations Mgmt,3,program_catalog
+ACC121,Prin of Managerial Accounting,4,program_catalog
+ACC149,Intro to ACC Spreadsheets,2,program_catalog
+BUS225,Business Finance,3,program_catalog
+ACC130,,3,program_catalog
+ACC140,,2,program_catalog
+ACC220,,4,program_catalog
+BAF143,Financial Planning,3,program_catalog
+BUS125,Personal Finance,3,program_catalog
+BUS147,Business Insurance,3,program_catalog
+ACC129,Individual Income Taxes,3,program_catalog
+ACC132,NC Business Taxes,2,program_catalog
+ACC150,Accounting Software Appl,2,program_catalog
+ACC151,Acct Spreadsheet Appl,2,program_catalog
+ACC180,Practices in Bookkeeping,3,program_catalog
+ACC221,Intermediate Acct II,4,program_catalog
+ACC225,Cost Accounting,3,program_catalog
+ACC226,Advanced Managerial Accounting,3,program_catalog
+ACC240,Gov & Not-For-Profit Acct,3,program_catalog
+ACC269,Auditing & Assurance Services,3,program_catalog
+BAF110,Principles of Banking,3,program_catalog
+BUS116,Business Law II,3,program_catalog
+BUS135,Principles of Supervision,3,program_catalog
+BUS137,Principles of Management,3,program_catalog
+BUS148,Survey of Real Estate,3,program_catalog
+BUS228,Business Statistics,3,program_catalog
+BUS230,Small Business Management,3,program_catalog
+BUS255,Org Behavior in Business,3,program_catalog
+BUS258,Compensation and Benefits,3,program_catalog
+ETR240,Funding for Entrepreneurs,3,program_catalog
+MKT120,Principles of Marketing,3,program_catalog
+MKT123,Fundamentals of Selling,3,program_catalog
+OST286,Professional Development,3,program_catalog
+ART114,Art History Survey I,3,program_catalog
+HUM160,Introduction to Film,3,program_catalog
+HIS111,World Civilizations I,3,program_catalog
+HIS121,Western Civilization I,3,program_catalog
+GRD280,Portfolio Design,4,program_catalog
+GRD155,Publication Design,3,program_catalog
+GRD241,Graphic Design III,4,program_catalog
+GRD180,Interactive Design,3,program_catalog
+GRD188,Graphic Design for Web I,3,program_catalog
+GRD242,Graphic Design IV,4,program_catalog
+GRD265,Digital Print Production,3,program_catalog
+GRD282,Advertising Copywriting,2,program_catalog
+ART131,Drawing I,3,program_catalog
+ART132,Drawing II,3,program_catalog
+ART288,Studio,3,program_catalog
+GRD133,Illustration III,3,program_catalog
+GRD263,Digital Image Editing,3,program_catalog
+MKT122,Visual Merchandising,3,program_catalog
+MKT220,Advertising and Sales Promotio,3,program_catalog
+PHY121,Applied Physics I,4,program_catalog
+ART115,Art History Survey,3,program_catalog
+ART116,Survey of American,3,program_catalog
+ART117,Non-Western Art History,3,program_catalog
+ART121,Two-Dimensional Design,3,program_catalog
+ART240,Painting I,3,program_catalog
+ART241,Painting II,3,program_catalog
+ART244,Watercolor,3,program_catalog
+ART171,Digital Design I,3,program_catalog
+ART281,Sculpture I,3,program_catalog
+ART283,Ceramics I,3,program_catalog
+DAN110,Dance Appreciation,3,program_catalog
+DRA111,Theatre Appreciation,3,program_catalog
+DRA112,Literature of the Theatre,3,program_catalog
+DRA115,Theatre Criticism,3,program_catalog
+DRA122,Oral Interpretation,3,program_catalog
+DRA126,Storytelling,3,program_catalog
+DRA211,Theatre History I,3,program_catalog
+DRA212,Theatre History II,3,program_catalog
+HUM121,The Nature of America,3,program_catalog
+HUM122,Southern Culture,3,program_catalog
+HUM130,Myth in Human Culture,3,program_catalog
+HUM150,American Women's Studies,3,program_catalog
+HUM170,The Holocaust,3,program_catalog
+HUM211,Humanities I,3,program_catalog
+HUM212,Humanities II,3,program_catalog
+HUM220,Human Values and Meaning,3,program_catalog
+MUS112,Introduction to Jazz,3,program_catalog
+MUS113,American Music,3,program_catalog
+MUS114,Introduction to World Music,3,program_catalog
+MUS213,Opera and Musical Theatre,3,program_catalog
+PHI210,History of Philosophy,3,program_catalog
+PHI215,Philosophical Issues,3,program_catalog
+PHI220,Western Philosophy I,3,program_catalog
+PHI221,Western Philosophy II,3,program_catalog
+PHI230,Introduction to Logic,3,program_catalog
+REL111,Eastern Religions,3,program_catalog
+REL112,Western Religions,3,program_catalog
+REL211,Intro to Old Testament,3,program_catalog
+REL212,Intro to New Testament,3,program_catalog
+REL221,Religion in America,3,program_catalog
+ANT210,General Anthropology,3,program_catalog
+ANT220,Cultural Anthropology,3,program_catalog
+ANT221,Comparative Cultures,3,program_catalog
+ANT230,Physical Anthropology,3,program_catalog
+ANT240,Archaeology,3,program_catalog
+GEO110,Introduction to Geography,3,program_catalog
+GEO112,Cultural Geography,3,program_catalog
+GEO113,Economic Geography,3,program_catalog
+GEO121,North Carolina Geography,3,program_catalog
+GEO130,General Physical Geography,3,program_catalog
+GEO131,Physical Geography I,4,program_catalog
+GEO132,Physical Geography II,4,program_catalog
+HIS112,World Civilizations II,3,program_catalog
+HIS115,Intro to Global History,3,program_catalog
+HIS116,Current World Problems,3,program_catalog
+HIS122,Western Civilization II,3,program_catalog
+HIS131,American History I,3,program_catalog
+HIS132,American History II,3,program_catalog
+HIS162,Women and History,3,program_catalog
+HIS212,Medieval History,3,program_catalog
+HIS221,African-American History,3,program_catalog
+HIS222,African-American Hist I,3,program_catalog
+HIS223,African-American Hist II,3,program_catalog
+HIS226,The Civil War,3,program_catalog
+HIS236,North Carolina History,3,program_catalog
+POL130,State & Local Government,3,program_catalog
+POL210,Comparative Government,3,program_catalog
+POL220,International Relations,3,program_catalog
+PSY110,Life Span Development,3,program_catalog
+PSY141,Psych of Death and Dying,3,program_catalog
+PSY211,Psychology of Adjustment,3,program_catalog
+PSY237,Social Psychology,3,program_catalog
+PSY239,Psychology of Personality SB-AAS,3,program_catalog
+AHR110,Intro to Refrigeration,5,program_catalog
+AHR111,HVACR Electricity,3,program_catalog
+AHR112,Heating Technology,4,program_catalog
+AHR113,Comfort Cooling,4,program_catalog
+AHR114,Heat Pump Technology,4,program_catalog
+AHR130,HVAC Controls,3,program_catalog
+AHR211,Residential System Design,3,program_catalog
+AHR212,Advanced Comfort Systems,4,program_catalog
+AHR213,HVACR Building Code,2,program_catalog
+AHR115,Refrigeration Systems,4,program_catalog
+AHR133,HVAC Servicing,4,program_catalog
+AHR160,Refrigerant Certification,1,program_catalog
+AHR180,HVACR Customer Relations,1,program_catalog
+AHR151,HVAC Duct Systems I,2,program_catalog
+AHR215,Commercial HVAC Controls,2,program_catalog
+AHR245,Chiller Systems,2,program_catalog
+AHR255,Indoor Air Quality,2,program_catalog
+BAT111,Building Automation Systems,2,program_catalog
+AHR250,HVAC System Diagnostics,2,program_catalog
+POL110,Intro Political Science,3,program_catalog
+PSY241,Developmental Psych,3,program_catalog
+PSY243,Child Psychology,3,program_catalog
+PSY246,Adolescent Psychology,3,program_catalog
+PSY249,Psychology of Aging,3,program_catalog
+PSY255,Intro to Exceptionality,3,program_catalog
+PSY259,Human Sexuality,3,program_catalog
+PSY263,Educational Psychology,3,program_catalog
+PSY265,Behavioral Modification,3,program_catalog
+PSY271,Sports Psychology,3,program_catalog
+PSY275,Health Psychology,3,program_catalog
+PSY281,Abnormal Psychology,3,program_catalog
+SOC213,Sociology of the Family,3,program_catalog
+SOC225,Social Diversity,3,program_catalog
+SOC230,Race and Ethnic Relations,3,program_catalog
+SOC232,Social Context of Aging,3,program_catalog
+SOC240,Social Psychology,3,program_catalog
+SOC244,Soc of Death & Dying,3,program_catalog
+SOC250,Sociology of Religion,3,program_catalog
+ELC112,DC/AC Electricity,5,program_catalog
+ELC113,Residential Wiring,4,program_catalog
+ELC117,Motors and Controls,4,program_catalog
+ELC128,Intro to PLC,3,program_catalog
+ELC114,Commercial Wiring,4,program_catalog
+ELC121,Electrical Estimating,2,program_catalog
+ELC122,Advanced Residential Wiring,4,program_catalog
+ELC220,Photovoltaic Sys Tech,3,program_catalog
+BPR130,Print Reading-Construction,3,program_catalog
+ELC118,National Electrical Code,2,program_catalog
+ELC119,NEC Calculations,2,program_catalog
+ELC234,Electrical System Design,3,program_catalog
+ISC115,Construction Safety,2,program_catalog
+AHR120,,2,program_catalog
+CST241,,3,program_catalog
+ELC215,,3,program_catalog
+PLU115,,4,program_catalog
+SST140,,3,program_catalog
+WLD112,Basic Welding Processes,2,program_catalog
+BIO168,Anatomy and Physiology I,4,program_catalog
+EMS110,EMT,9,program_catalog
+BIO163,Basic Anat & Physiology,5,program_catalog
+BIO169,Anatomy and Physiology II,4,program_catalog
+EMS122,EMS Clinical Practicum I,1,program_catalog
+EMS130,Pharmacology,4,program_catalog
+EMS131,Advanced Airway Management,2,program_catalog
+EMS160,Cardiology I,3,program_catalog
+EMS220,Cardiology II,3,program_catalog
+EMS221,EMS Clinical Practicum II,2,program_catalog
+EMS231,EMS Clinical Pract III,3,program_catalog
+EMS240,Patients W/ Special Challenges,2,program_catalog
+EMS241,EMS Clinical Practicum IV,4,program_catalog
+EMS250,Medical Emergencies,4,program_catalog
+EMS260,Trauma Emergencies,2,program_catalog
+EMS270,Life Span Emergencies,4,program_catalog
+EMS285,EMS Capstone,2,program_catalog
+EMS210,Adv. Patient Assessment,2,program_catalog
+EMS115,Defense Tactics for EMS,2,program_catalog
+EMS125,EMS Instructor Methodology,3,program_catalog
+EMS140,Rescue Scene Management,2,program_catalog
+EMS235,EMS Management,2,program_catalog
+MED120,Survey of Med Terminology,2,program_catalog
+OST141,Med Office Terms I,3,program_catalog
+OST142,Med Office Terms II,3,program_catalog
+ART260,Photography Appreciation,3,program_catalog
+DRA120,Voice for Performance,3,program_catalog
+DRA130,Acting I,3,program_catalog
+MUS121,Music Theory I,3,program_catalog
+BPR115,Elc/Fluid Power Diagrams,2,program_catalog
+HYD110,Hydraulics/Pneumatics I,3,program_catalog
+ISC112,Industrial Safety,2,program_catalog
+MAC141,Machining Applications I,4,program_catalog
+MEC130,Mechanisms,3,program_catalog
+WLD131,GTAW (TIG) Plate,4,program_catalog
+ELC228,PLC Applications,4,program_catalog
+ATR112,Intro to Automation,3,program_catalog
+ATR212,Industrial Robots,3,program_catalog
+ENG101,Applied,3,program_catalog
+WLD110,Cutting,2,program_catalog
+WLD115,SMAW (Stick) Plate,5,program_catalog
+WLD121,GMAW (MIG) FCAW/Plate,4,program_catalog
+WLD141,Symbols & Specifications,3,program_catalog
+CIS113,Computer Basics,1,program_catalog
+WLD116,SMAW (stick) Plate/Pipe,4,program_catalog
+WLD132,GTAW (TIG) Plate/Pipe,3,program_catalog
+WLD151,Fabrication I,4,program_catalog
+WLD261,Certification Practices,2,program_catalog
+CJC111,Intro to Criminal Justice,3,program_catalog
+CJC112,Criminology,3,program_catalog
+CJC113,Juvenile Justice,3,program_catalog
+CJC131,Criminal Law,3,program_catalog
+CJC212,Ethics & Comm Relations,3,program_catalog
+CJC221,Investigative Principles,4,program_catalog
+CJC231,Constitutional Law,3,program_catalog
+CJC132,Court Procedure & Evidence,3,program_catalog
+CJC141,Corrections,3,program_catalog
+BIO111,General Biology I,4,program_catalog
+BIO112,General Biology II,4,program_catalog
+CJC115,Crime Scene Photography,3,program_catalog
+CJC120,Interviews/Interrogations,2,program_catalog
+CJC121,Law Enforcement Operations,3,program_catalog
+CJC122,Community Policing,3,program_catalog
+CJC151,Intro to Loss Prevention,3,program_catalog
+CJC160,Terrorism: Underlying Issu,3,program_catalog
+CJC161,Intro Homeland Security,3,program_catalog
+CJC162,Intel Analysis & Sec Mgmt,3,program_catalog
+CJC163,Trans and Border Security,3,program_catalog
+CJC170,Critical Incident Mgmt Pub,3,program_catalog
+CJC211,Counseling,3,program_catalog
+CJC213,Substance Abuse,3,program_catalog
+CJC214,Victimology,3,program_catalog
+CJC215,Organization & Administration,3,program_catalog
+CJC222,Criminalistics,3,program_catalog
+CJC223,Organized Crime,3,program_catalog
+CJC225,Crisis Intervention,3,program_catalog
+CJC232,Civil Liability,3,program_catalog
+CJC233,Correctional Law,3,program_catalog
+CJC240,Law Enfor Mgt. & Supervis,3,program_catalog
+CJC241,Community-Based Corrections,3,program_catalog
+CJC244,Footwear and Tire Imprint,3,program_catalog
+CJC255,Issues in Crim Justice App,3,program_catalog
+CJC260,Threat Assessment,2,program_catalog
+CJC262,High-Risk Event Planning,2,program_catalog
+EPT120,Sociology of Disaster,3,program_catalog
+EPT130,Mitigation & Preparedness,3,program_catalog
+EPT210,Response & Recovery,3,program_catalog
+EPT220,Terrorism and Emer. Mgt.,3,program_catalog
+PAD151,Intro to Public Admin,3,program_catalog
+PAD152,Ethics in Government,3,program_catalog
+PAD251,Public Finance & Budgeting,3,program_catalog
+PAD252,Public Policy Analysis,3,program_catalog
+PAD254,Grant Writing,3,program_catalog
+PED110,Fit and Well for Life,2,program_catalog
+SPA111,Elementary Spanish I,3,program_catalog
+WBL133,Work-Based Learning III,3,program_catalog
+WBL211,Work-Based Learning IV,1,program_catalog
+BUS274,,3,training:Demonstrated Logistician-SOLE
+BUS253,,3,training:Distributed Leader III (DLC III)
+ITL245,,3,training:Geoint Professional Fundamentals
+FIP230,,5,training:Hazmat Familiarization/Safety
+ART264,,3,training:Intermediate Photojournalism
+HEA110,,3,training:Master Fitness
+PMT110,,3,training:Project Management
+BUS234,,3,training:SHARP certification
+BUS285,,3,training:Warrant Officer Senior Staff Course
+LDR110,,3,training:Sergeant’s School Seminar Program

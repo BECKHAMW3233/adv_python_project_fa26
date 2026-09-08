@@ -19,12 +19,21 @@ def build_reference(
     already-resolved single-course training row is used only for a course the catalog never
     mentions. First match wins for a given course_id -- confirmed against the real data that
     no course_id carries conflicting credit values across programs, so this is deterministic,
-    not an arbitrary tie-break."""
+    not an arbitrary tie-break. course_title is a human-readable convenience column, not used
+    for any matching logic: a program-catalog entry uses that program's own title for the
+    course; a training-sourced entry (which has no title of its own) falls back to the
+    catalog's title for the same course_id when any program names it, and is left blank
+    -- never guessed -- when no source names the course anywhere."""
     reference: dict[str, CourseCreditReference] = {}
+    catalog_titles = {
+        record.course_id: record.course_title
+        for record in program_records
+        if record.course_id and record.course_title
+    }
     for record in program_records:
         if record.course_id and record.course_credits and record.course_id not in reference:
             reference[record.course_id] = CourseCreditReference(
-                record.course_id, record.course_credits, "program_catalog"
+                record.course_id, record.course_title, record.course_credits, "program_catalog"
             )
     for record in training_records:
         if (
@@ -34,7 +43,10 @@ def build_reference(
             and record.course_id not in reference
         ):
             reference[record.course_id] = CourseCreditReference(
-                record.course_id, record.course_credits, f"training:{record.training_name}"
+                record.course_id,
+                catalog_titles.get(record.course_id, ""),
+                record.course_credits,
+                f"training:{record.training_name}",
             )
     return reference
 

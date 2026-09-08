@@ -154,6 +154,7 @@ class RecommendationEngine:
                 weight=RECOMMENDATION_WEIGHTS[record.requirement_type],
                 ranking_points=profile_credits[record.course_id]
                 * RECOMMENDATION_WEIGHTS[record.requirement_type],
+                course_title=record.course_title,
             )
             for record in records
         ]

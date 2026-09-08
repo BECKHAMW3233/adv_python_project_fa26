@@ -13,6 +13,7 @@ from models import ProgramRequirement, ProgramWorkbookIssue
 from services.normalizer import normalize_text
 
 _ID_COLUMN_LIMIT = 22  # term column index; everything before this may hold wrapped label/ID text
+_TITLE_COLUMN = 25  # structured rows' course-title column, confirmed against the real workbook
 
 _PROGRAM_HEADER_PATTERN = re.compile(
     r"Program of Study:\s*(?P<title>.+?)\s*\((?P<code>[A-Z]\d{5})\)\s*Type:\s*(?P<credential>\S+)"
@@ -31,7 +32,7 @@ _GROUP_NUMBER_PATTERN = re.compile(
 )
 _STANDALONE_TOTAL_PATTERN = re.compile(r"\(\s*(?P<total>\d+\.\d{2})\s*\)")
 _SUBGROUP_LABEL_PATTERN = re.compile(
-    r"(?P<label>[A-Za-z][A-Za-z0-9 /&]*?\b(?:Pick|Courses))\b", re.IGNORECASE
+    r"(?P<label>[A-Za-z](?:[A-Za-z0-9 /&]|\.(?!\d))*?\b(?:Pick|Courses))\b", re.IGNORECASE
 )
 _TAKE_PATTERN = re.compile(
     r">\s*Take\s+(?:\S+\s+)*?(?P<credits>\d+)\s+credits?\b", re.IGNORECASE
@@ -39,7 +40,7 @@ _TAKE_PATTERN = re.compile(
 _NESTED_PATTERN = re.compile(r"\bGroups?\b|\bSubrequirement", re.IGNORECASE)
 _SIMPLE_COURSE_PATTERN = re.compile(r"\b([A-Z]{2,4}-\d{3})\b")
 _FLATTENED_COURSE_PATTERN = re.compile(
-    r"S\d+\s+(?P<course>[A-Z]{2,4}-\d{3})\s+\d{4}[A-Z]{2}\s+.*?"
+    r"S\d+\s+(?P<course>[A-Z]{2,4}-\d{3})\s+\d{4}[A-Z]{2}\s+(?P<title>.*?)\s+"
     r"(?P<class>\d+\.\d{2})\s+(?P<lab>\d+\.\d{2})\s+(?P<clinic>\d+\.\d{2})\s+(?P<credits>\d+\.\d{2})"
 )
 _TRAILING_DECIMAL_PATTERN = re.compile(r"(\d+\.\d{2})\s*$")
@@ -67,6 +68,7 @@ class _Event:
     total: float | None = None
     course_id: str = ""
     credits: int | None = None
+    course_title: str = ""
 
 
 def _is_num(value: object) -> bool:
@@ -196,12 +198,14 @@ def _collect_events(blob: str, row: tuple, is_structured: bool) -> list[_Event]:
             # sourced only from the dedicated footer/standalone-total patterns, so a
             # group-level figure here can't be allowed to overwrite it.
             credits, _incidental_total = _row_hours(row)
+            title = row[_TITLE_COLUMN] if len(row) > _TITLE_COLUMN else None
             events.append(
                 _Event(
                     position=match.start(),
                     kind="course",
                     course_id=match.group(1).replace("-", "").replace(" ", "").upper(),
                     credits=credits if credits is not None else 0,
+                    course_title=normalize_text(title) if isinstance(title, str) else "",
                 )
             )
     else:
@@ -212,6 +216,7 @@ def _collect_events(blob: str, row: tuple, is_structured: bool) -> list[_Event]:
                     kind="course",
                     course_id=match.group("course").replace("-", "").replace(" ", "").upper(),
                     credits=int(float(match.group("credits"))),
+                    course_title=normalize_text(match.group("title")),
                 )
             )
 
@@ -306,6 +311,14 @@ class ProgramWorkbookImporter:
             for event in _collect_events(blob, row, is_structured):
                 if event.kind == "group":
                     state.requirement_group = event.name
+                    # A new top-level group starts a fresh subgroup context -- without this,
+                    # a group with no subgroup marker of its own (see the "take" branch
+                    # below) would silently inherit whatever subgroup_type/label the
+                    # *previous*, unrelated group last set, misclassifying its courses.
+                    state.subgroup_label = ""
+                    state.subgroup_type = ""
+                    state.subgroup_target_credits = None
+                    state.nested = False
                 elif event.kind == "subgroup":
                     state.subgroup_label = event.name
                     state.subgroup_type = event.subgroup_type
@@ -320,6 +333,15 @@ class ProgramWorkbookImporter:
                     program_totals[state.program_code] = event.total
                 elif event.kind == "course":
                     requirement_type = _classify(state)
+                    # An "unresolved" classification means _classify() couldn't safely tell
+                    # whether this course is directly required or part of a choice pool --
+                    # e.g. a "> Take N credits From ..." instruction with no "...Pick"/
+                    # "...Courses"-suffixed label recognized for it, so there's no reliable
+                    # way to group it with its real alternatives without risking merging it
+                    # with an unrelated pool that happens to share the same parent group.
+                    # Flagging it for manual review (rather than guessing a grouping) keeps
+                    # it out of both scoring and any choice-group credit cap.
+                    unresolved_structure = requirement_type == "unresolved"
                     title, credential, catalog_year = program_meta.get(
                         state.program_code, ("", "", "")
                     )
@@ -343,13 +365,18 @@ class ProgramWorkbookImporter:
                             source_file=path.name,
                             source_row=row_index,
                             raw_rule_text=blob,
-                            status="manual_review" if state.nested else "ok",
+                            status="manual_review" if (state.nested or unresolved_structure) else "ok",
                             notes=(
                                 "Nested multi-level choice structure not modeled; "
                                 "requirement type not classified"
                                 if state.nested
+                                else "Required vs. choice status could not be determined "
+                                "safely from the source structure (no recognized "
+                                "\"...Pick\"/\"...Courses\" label for this requirement)"
+                                if unresolved_structure
                                 else ""
                             ),
+                            course_title=event.course_title,
                         )
                     )
 

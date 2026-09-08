@@ -3,19 +3,26 @@ lineage is preserved, duplicate courses are deduplicated, and totals are correct
 
 from __future__ import annotations
 
-from models import MOSCourseEquivalency, TrainingEquivalency
+from models import MOSCourseEquivalency, ProgramRequirement, TrainingEquivalency
 from services.credit_evaluator import CreditEvaluator
 
 
-def _mos(course_id, credits, skill_level="10", mos_code="12P"):
+def _mos(course_id, credits, skill_level="10", mos_code="12P", title="Title"):
     return MOSCourseEquivalency(
-        mos_code, "Title", "Army", skill_level, course_id, "Title", credits, "AAS", "f", "s", "ok", ""
+        mos_code, "Title", "Army", skill_level, course_id, title, credits, "AAS", "f", "s", "ok", ""
     )
 
 
 def _training(training_id, course_id, credits, name="Training"):
     return TrainingEquivalency(
         training_id, "Army", name, "", course_id, credits, 5, False, "", "f", "t", "ok", ""
+    )
+
+
+def _program(course_id, title, credits=3):
+    return ProgramRequirement(
+        "A00001", "A00001", "TRD", "2026", 60.0, "Group", "major_required",
+        course_id, credits, "", None, "f", 1, "raw", "ok", "", title
     )
 
 
@@ -78,3 +85,24 @@ def test_different_mos_codes_at_different_skill_levels_merge_into_one_profile():
         mos_records, [("12P", "10"), ("25B", "30")], [], []
     )
     assert {e.course_id for e in profile} == {"CIS110", "ELC112"}
+
+
+def test_mos_sourced_course_uses_the_mos_records_own_title():
+    mos_records = [_mos("CIS110", 3, title="Intro to Computers")]
+    profile = CreditEvaluator().build_credit_profile(mos_records, [("12P", "10")], [], [])
+    assert profile[0].course_title == "Intro to Computers"
+
+
+def test_training_sourced_course_falls_back_to_program_catalog_title():
+    training_records = [_training("t1", "BUS234", 3, name="SHARP certification")]
+    program_records = [_program("BUS234", "Sexual Assault Prevention")]
+    profile = CreditEvaluator().build_credit_profile(
+        [], [], training_records, ["t1"], program_records
+    )
+    assert profile[0].course_title == "Sexual Assault Prevention"
+
+
+def test_course_title_left_blank_when_no_source_names_it():
+    training_records = [_training("t1", "PED172", 2, name="Army Basic Training")]
+    profile = CreditEvaluator().build_credit_profile([], [], training_records, ["t1"], [])
+    assert profile[0].course_title == ""

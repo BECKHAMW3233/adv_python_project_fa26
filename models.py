@@ -53,6 +53,17 @@ class TrainingTableIssue:
 
 
 @dataclass
+class CourseCreditReference:
+    """A confirmed course_id -> credits value, sourced from the FTCC program catalog or an
+    already-resolved single-course training row -- never invented. Used to resolve training
+    rows that named a course without their own per-course credit value."""
+
+    course_id: str
+    credits: int
+    source: str
+
+
+@dataclass
 class ProgramRequirement:
     program_code: str
     program_title: str
@@ -70,6 +81,7 @@ class ProgramRequirement:
     raw_rule_text: str
     status: str
     notes: str
+    course_title: str = ""
 
 
 @dataclass
@@ -94,6 +106,7 @@ class CreditProfileEntry:
     course_id: str
     credits: int
     sources: str  # "; "-joined description of every source that granted credit for this course
+    course_title: str = ""
 
 
 @dataclass
@@ -103,6 +116,7 @@ class MatchedCourse:
     requirement_type: str
     weight: int
     ranking_points: int
+    course_title: str = ""
 
 
 @dataclass

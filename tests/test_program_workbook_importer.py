@@ -74,6 +74,8 @@ def test_course_extraction_structured_and_flattened_text(tmp_path):
     assert issues == []
     by_course = {r.course_id: r.course_credits for r in records}
     assert by_course == {"CIS110": 3, "CTI110": 3}
+    titles = {r.course_id: r.course_title for r in records}
+    assert titles == {"CIS110": "Intro Computers", "CTI110": "IT Foundations"}
 
 
 def test_choice_group_id_and_target_shared_across_options(tmp_path):

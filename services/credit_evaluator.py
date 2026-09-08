@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Sequence
 
 from exceptions import InvalidSelectionError
-from models import CreditProfileEntry, MOSCourseEquivalency, TrainingEquivalency
+from models import CreditProfileEntry, MOSCourseEquivalency, ProgramRequirement, TrainingEquivalency
 
 
 class CreditEvaluator:
@@ -103,29 +103,49 @@ class CreditEvaluator:
         mos_selections: Sequence[tuple[str, str]],
         training_records: Sequence[TrainingEquivalency],
         selected_training_ids: Sequence[str],
+        program_records: Sequence[ProgramRequirement] = (),
     ) -> list[CreditProfileEntry]:
         """Combine the selected MOS/skill-level equivalencies (a veteran may hold more than one
         MOS by the time they leave service, e.g. after reclassification) and selected trainings'
         equivalencies into one deduplicated potential-credit profile. When more than one source
         grants credit for the same course, every contributing source is preserved and the higher
         credit value is kept (the same course is only ever counted once toward the total, never
-        summed across sources)."""
-        by_course: dict[str, CreditProfileEntry] = {}
+        summed across sources).
 
-        def _add(course_id: str, credits: int, source: str) -> None:
+        Each entry's course_title comes from an MOS record's own title when the course was
+        MOS-granted; a training-granted course has no title of its own (TrainingEquivalency
+        doesn't carry one), so program_records -- when supplied -- is used as a fallback
+        lookup against the FTCC catalog's title for that same course_id. Left blank if no
+        source names it anywhere, rather than guessed."""
+        by_course: dict[str, CreditProfileEntry] = {}
+        catalog_titles = {
+            record.course_id: record.course_title
+            for record in program_records
+            if record.course_id and record.course_title
+        }
+
+        def _add(course_id: str, credits: int, source: str, title: str = "") -> None:
             if credits <= 0:
                 return
+            resolved_title = title or catalog_titles.get(course_id, "")
             entry = by_course.get(course_id)
             if entry is None:
-                by_course[course_id] = CreditProfileEntry(course_id, credits, source)
+                by_course[course_id] = CreditProfileEntry(course_id, credits, source, resolved_title)
             else:
                 entry.credits = max(entry.credits, credits)
                 entry.sources = f"{entry.sources}; {source}"
+                if not entry.course_title:
+                    entry.course_title = resolved_title
 
         for mos_code, skill_level in mos_selections:
             for record in mos_records:
                 if record.mos_code == mos_code and record.skill_level == skill_level:
-                    _add(record.course_id, record.credits, f"MOS {mos_code} skill level {skill_level}")
+                    _add(
+                        record.course_id,
+                        record.credits,
+                        f"MOS {mos_code} skill level {skill_level}",
+                        record.course_title,
+                    )
 
         selected_ids = set(selected_training_ids)
         for record in training_records:

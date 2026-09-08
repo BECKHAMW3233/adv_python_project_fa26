@@ -108,7 +108,7 @@ def main() -> None:
         len(training_ids),
     )
     profile = CreditEvaluator().build_credit_profile(
-        mos_records, mos_selections, training_records, training_ids
+        mos_records, mos_selections, training_records, training_ids, program_records
     )
     for entry in profile:
         if ";" in entry.sources:
